@@ -33,5 +33,6 @@ Available options are:
 * Convert the files to markdown
 * Convert the files to HTML
 * Generate examples, one for each state if neccessary
+* Handle multiple blocks nicely
 * Wrap them all in a mini-site, possibly using gulp-ssg
 
