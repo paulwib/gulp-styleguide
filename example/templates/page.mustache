@@ -1,0 +1,22 @@
+<h1>{{site.title}}</h1>
+
+{{#dss}}
+    {{#blocks}}
+        <h2>{{name}}</h2>
+        {{{description}}}
+        <pre>{{{markup.escaped}}}</pre>
+        {{{markup.example}}}
+    {{/blocks}}
+    <hr>
+{{/dss}}
+
+{{^dss}}
+    {{{content}}}
+{{/dss}}
+
+<ul>
+{{#site.index.files}}
+<li><a href="{{meta.url}}">{{meta.name}}</a></li>
+{{/site.index.files}}
+</ul>
+

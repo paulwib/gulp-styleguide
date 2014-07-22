@@ -1,38 +1,40 @@
 # gulp-dss
 
-A task for building styleguide documentation from DSS comments in your CSS/SCSS/LESS.
+A gulp pipeline for building styleguide documentation from DSS comments in your CSS/SCSS/LESS.
 
 ## Usage
 
-There is a prepared task you can run with:
+There is a prepared set of tasks you can run with:
 
-    require('gulp-dss').task();
+    var styleguide = require('../styleguide');
+    var options = {
+        site: {
+            title: 'Test Pattern Library'
+        }
+    };
 
-You should now be able to run `gulp dss` from your command line and have a bunch of stuff in a styleguide folder.
+    styleguide.setup(options);
 
-You can also use individual bits and pieces to make your own task. Have a look in task.js for ideas.
+You should now be able to run:
 
-The only gulp module this provides is a simple wrapper around DSS. Everything else is done with other gulp modules which you are free to use or ignore as you like :)
+    gulp styleguide.build
+
+...from your command line and have a bunch of stuff in a styleguide folder.
+
+For development you can run a preview server which watches for changes and has livereload with:
+
+    gulp styleguide.preview
+
+Look in the example directory to see a working gulpfile with templates etc.
+
+You can also use that for ideas if you prefer to build your own pipeline. 
+
 
 ## Options
 
-You can pass options to the task like
-
-    require('gulp-dss').task(options);
-
-Available options are:
-
-* src - pattern to match source CSS files, default is `scss/**/.scss`
-* dest - where to output the styleguide, default is `styleguide/`
-* taskName - set a name for the task, default is `dss`
-
----
+TODO
 
 ## TODO
 
-* Convert the files to markdown
-* Convert the files to HTML
-* Generate examples, one for each state if neccessary
-* Handle multiple blocks nicely
-* Wrap them all in a mini-site, possibly using gulp-ssg
-
+* Add better default templates
+* Add SCSS -> CSS conversion to example (or maybe build into guide? probably not)
