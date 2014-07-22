@@ -1,7 +1,7 @@
 'use strict';
 
+var dss = require('./');
 var gulp = require('gulp');
-var dss = require('dss');
 var extend = require('extend');
 
 
@@ -17,8 +17,9 @@ function setup(options) {
 
     gulp.task(options.taskName, function() {
         return gulp.src(options.src)
-            .pipe(dss)
+            .pipe(dss.extract())
             .pipe(gulp.dest(options.dest));
     });
 }
+
 module.exports = setup;

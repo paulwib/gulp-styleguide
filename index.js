@@ -10,7 +10,7 @@ var dss = require('dss');
 /**
  * Parse DSS content of CSS and attach to file object
  */
-module.exports = function() {
+function extract() {
 
     return es.map(function(file, cb) {
         if (file.isNull()) {
@@ -24,4 +24,8 @@ module.exports = function() {
             cb(null, file);
         });
     });
+}
+
+module.exports = {
+    extract: extract
 };
