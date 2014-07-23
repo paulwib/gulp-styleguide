@@ -25,6 +25,8 @@ var defaultOptions = {
         server: 'styleguide.server',
         clean: 'styleguide.clean'
     },
+    watchPaths: [],
+    watchTasks: [],
     src: {
         css: 'scss/**/*.{scss,md}',
         templates: 'templates/**/*.{html,mustache}'
@@ -41,19 +43,23 @@ var defaultOptions = {
 /**
  * Set-up the default set of tasks
  *
- * You could also set these up manually if more flexibility required.
  * If not flexible enough then build your own pipeline, it's not too hard :)
  */
 function setup(options) {
 
-    options = extend(defaultOptions, options);
+    options = extend(true, defaultOptions, options);
     var tasks = options.taskNames;
+
+    options.watchPaths.push(options.src.css, options.src.templates);
+    options.watchTasks.unshift(tasks.main);
 
     gulp.task(tasks.clean, cleanup(options));
     gulp.task(tasks.templates, [tasks.clean], compileTemplates(options));
     gulp.task(tasks.build, [tasks.templates], build(options));
     gulp.task(tasks.server, [tasks.build], server(options));
     gulp.task(tasks.main, [tasks.clean, tasks.build]);
+
+    return options;
 }
 
 /**
@@ -64,8 +70,6 @@ function setup(options) {
  * preview server.
  */
 function compileTemplates(options) {
-
-    options = extend(defaultOptions, options);
 
     return function() {
         return gulp.src(options.src.templates)
@@ -81,8 +85,6 @@ function compileTemplates(options) {
  * Task to build the HTML output
  */
 function build(options) {
-
-    options = extend(defaultOptions, options);
 
     return function() {
         var templates = require(process.cwd() + '/' + options.dest.templates);
@@ -101,10 +103,8 @@ function build(options) {
  */
 function server(options) {
 
-    options = extend(defaultOptions, options);
-
     return function() {
-        gulp.watch([options.src.css, options.src.templates], [options.taskNames.clean, options.taskNames.build]);
+        gulp.watch(options.watchPaths, options.watchTasks);
 
         // Create a server for previewing
         var port = 8745;
@@ -112,6 +112,7 @@ function server(options) {
             ecstatic({ root: options.dest.html })
         ).listen(port);
         gutil.log('Preview website running on http://localhost:' + gutil.colors.magenta(port));
+        gutil.log('Watch runs tasks: ' + gutil.colors.magenta(options.watchTasks.join(', ')));
 
         // Live reload when files change (requires browser plug-in)
         if(process.platform !== 'win32') {
@@ -127,8 +128,6 @@ function server(options) {
  * Task to clean up generated files
  */
 function cleanup(options) {
-
-    options = extend(defaultOptions, options);
 
     return function() {
         return gulp.src([options.dest.html], { read: false })

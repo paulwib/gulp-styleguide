@@ -18,5 +18,8 @@
     "hogan.js": "^3.0.2",
     "marked": "^0.3.2",
     "through": "^2.3.4"
+  },
+  "devDependencies": {
+    "gulp-sass": "^0.7.2"
   }
 }
