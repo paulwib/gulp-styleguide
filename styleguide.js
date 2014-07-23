@@ -124,7 +124,7 @@ function server(options) {
 }
 
 /**
- * Task to clean up generated files 
+ * Task to clean up generated files
  */
 function cleanup(options) {
 
