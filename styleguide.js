@@ -16,6 +16,7 @@ var markdown = require('marked');
 var ssg = require('gulp-ssg');
 var templateCompiler = require('gulp-hogan-compile');
 var through = require('through');
+var path = require('path');
 
 var defaultOptions = {
     taskNames: {
@@ -75,7 +76,13 @@ function compileTemplates(options) {
         return gulp.src(options.src.templates)
             .pipe(templateCompiler('index.js', {
                 wrapper: 'commonjs',
-                hoganModule: 'hogan.js'
+                hoganModule: 'hogan.js',
+                templateName: function (file) {
+                    return path.join(
+                        path.dirname(file.relative),
+                        path.basename(file.relative, path.extname(file.relative))
+                    );
+                }
             }))
             .pipe(gulp.dest(options.dest.templates));
     };
@@ -116,8 +123,9 @@ function server(options) {
 
         // Live reload when files change (requires browser plug-in)
         if(process.platform !== 'win32') {
+            gutil.log('Running livereload, watching: ' + gutil.colors.magenta(options.dest.html));
             var server = livereload();
-            gulp.watch(options.dest + '/**').on('change', function(file) {
+            gulp.watch(options.dest.html + '/**').on('change', function(file) {
                 server.changed(file.path);
             });
         }
@@ -171,7 +179,7 @@ function template(site, templates) {
 
     return es.map(function(file, cb) {
 
-        var content, view = templates.page;
+        var content, view = templates['views/default'];
 
         if (file.isDSS) {
             file.dss.blocks.forEach(function(block) {

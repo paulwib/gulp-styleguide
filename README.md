@@ -37,7 +37,7 @@ When making a useful re-usable gulp pipeline it's often difficult to draw a line
 * Does not do any image, icon or font processing
 * Does not do any minification/uglifying
 
-The general philosophy is not to do any processing of your assets. It will only extract the DSS from your CSS (or SASS or LESS) and produce some HTML output using your templates. You can add these tasks to your onw gulpfile.
+The general philosophy is not to do any processing of your assets. It will only extract the DSS from your CSS (or SASS or LESS) and produce some HTML output using your templates. You can add these tasks to your own gulpfile.
 
 ## Options
 

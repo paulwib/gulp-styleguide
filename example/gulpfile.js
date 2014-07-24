@@ -20,7 +20,7 @@ var options = require('../styleguide').setup({
     // These paths aren't in the regular options, but we can add them for convenience
     // to have all our paths in one object
     src: {
-        scss: 'scss/*.scss'
+        scss: 'scss/main.scss'
     },
     dest: {
         css: 'styleguide/css'
