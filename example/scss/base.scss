@@ -1,6 +1,18 @@
 /**
  * @name Base
- * @description Basic text styles
+ * @description These are your basic text styles
+ */
+$lineHeight: 24;
+
+body {
+    background: #fff;
+    color: #000;
+    font-family: Helevtica, Arial, sans-serif;
+}
+
+/**
+ * @name Headings
+ * @description Headings h1...h6:
  * @markup
  *  <h1>Heading 1</h1>
  *  <h2>Heading 2</h2>
@@ -8,9 +20,49 @@
  *  <h4>Heading 4</h4>
  *  <h5>Heading 5</h5>
  *  <h6>Heading 6</h6>
- *  <p>Paragraph <span>span</span> <i>italic</i> <b>bold</b>.</p>
  */
-body {
-    background: #fff;
-    color: #000;
+h1, h2, h3, h4, h5, h6, p, table, pre {
+    margin: 0 0 $lineHeight*1px 0;
+}
+
+h1 {
+    font-size: 36px;
+    line-height: ($lineHeight*2)/36;
+}
+
+h2 {
+    font-size: 30px;
+    line-height: ($lineHeight*2)/30;
+}
+
+h3 {
+    font-size: 24px;
+    line-height: $lineHeight/24;
+}
+
+h4 {
+    font-size: 20px;
+    line-height: $lineHeight/20;
+}
+
+h5 {
+    font-size: 16px;
+    line-height: $lineHeight/16;
+}
+
+h6 {
+    font-size: 12px;
+    line-height: $lineHeight/12;
+}
+
+/**
+ * @name Paragraphs
+ @description Standard paragraphs:
+ * @markup
+ *  <p>Paragraph with <i>italic</i> and <b>bold</b>.</p>
+ */
+
+p {
+    font-size: 16px;
+    line-height: $lineHeight/16;
 }

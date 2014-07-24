@@ -3,9 +3,29 @@
   <head>
     <meta charset="utf-8">
     <title>{{site.title}}</title>
-    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/main.css">
   </head>
   <body>
-    {{$content}}Content goes here{{/content}}
+
+    <header>
+    <h1><a href="/">{{site.title}}</a></h1>
+    </header>
+
+    <nav>
+      <ul>
+        {{#site.index.files}}
+          {{^meta.isIndex}}
+          <li><a href="{{meta.url}}">{{meta.name}}</a></li>
+          {{/meta.isIndex}}
+        {{/site.index.files}}
+      </ul>
+    </nav>
+
+    <hr>
+
+    <section role="content">
+      {{$content}}Content goes here{{/content}}
+    </section>
+
   </body>
 </html>

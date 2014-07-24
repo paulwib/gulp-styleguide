@@ -36,3 +36,6 @@ gulp.task('sass', ['styleguide'], function () {
         .pipe(sass())
         .pipe(gulp.dest(options.dest.css));
 });
+
+// Default build task
+gulp.task('default', ['sass', 'styleguide']);

@@ -119,6 +119,7 @@ function server(options) {
             ecstatic({ root: options.dest.html })
         ).listen(port);
         gutil.log('Preview website running on http://localhost:' + gutil.colors.magenta(port));
+        gutil.log('Watching paths: ' + gutil.colors.magenta(options.watchPaths.join(', ')));
         gutil.log('Watch runs tasks: ' + gutil.colors.magenta(options.watchTasks.join(', ')));
 
         // Live reload when files change (requires browser plug-in)
@@ -155,18 +156,24 @@ function extract() {
         if (file.isStream()) {
             return this.emit('error', new gutil.PluginError('gulp-dss',  'Streaming not supported'));
         }
+        file.meta = {};
         // Skip the markdown files
         if (file.path.match(/\.md$/)) {
-            file.isDSS = false;
-            file.isMarkdown = true;
             cb(null, file);
             return;
         }
         // Parse the DSS
         dss.parse(file.contents.toString(), {}, function(dssParsed) {
             file.dss = dssParsed;
-            file.isDSS = true;
-            file.isMarkdown = false;
+            if (file.dss.blocks.length) {
+                file.meta.name = file.dss.blocks[0].name;
+                delete file.dss.blocks[0].name;
+            }
+            file.dss.blocks.forEach(function(block) {
+                if (block.hasOwnProperty('description')) {
+                    block.description = markdown(String(block.description));
+                }
+            });
             cb(null, file);
         });
     });
@@ -181,12 +188,7 @@ function template(site, templates) {
 
         var content, view = templates['views/default'];
 
-        if (file.isDSS) {
-            file.dss.blocks.forEach(function(block) {
-                block.description = markdown(String(block.description));
-            });
-        }
-        else if (file.isMarkdown) {
+        if (!file.hasOwnProperty('dss')) {
             content = markdown(String(file.contents));
         }
         var html = view.render({
