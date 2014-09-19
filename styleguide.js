@@ -17,6 +17,7 @@ var ssg = require('gulp-ssg');
 var templateCompiler = require('gulp-hogan-compile');
 var through = require('through');
 var path = require('path');
+var gulpFilter = require('gulp-filter');
 
 var defaultOptions = {
     taskNames: {
@@ -97,7 +98,13 @@ function build(options) {
         var templates = require(process.cwd() + '/' + options.dest.templates);
         delete require.cache[process.cwd() + '/' + options.dest.templates + '/index.js'];
 
+        // Don't want to include your main.scss file - bit hacky
+        var filter = gulpFilter(function(file) {
+            return path.basename(file.relative) !== 'main.scss';
+        });
+
         return gulp.src(options.src.css)
+            .pipe(filter)
             .pipe(extract())
             .pipe(ssg(options.site))
             .pipe(template(options.site, templates))

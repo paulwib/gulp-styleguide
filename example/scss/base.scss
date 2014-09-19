@@ -1,5 +1,5 @@
 /**
- * @name Base
+ * @name Base styles
  * @description These are your basic text styles
  */
 $lineHeight: 24;
@@ -57,11 +57,10 @@ h6 {
 
 /**
  * @name Paragraphs
- @description Standard paragraphs:
+ * @description Standard paragraphs:
  * @markup
  *  <p>Paragraph with <i>italic</i> and <b>bold</b>.</p>
  */
-
 p {
     font-size: 16px;
     line-height: $lineHeight/16;
