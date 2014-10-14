@@ -30,12 +30,12 @@ var defaultOptions = {
     watchPaths: [],
     watchTasks: [],
     src: {
-        css: 'scss/**/*.{scss,md}',
-        templates: 'templates/**/*.{html,mustache}'
+        css: 'src/scss/**/*.{scss,md}',
+        templates: 'src/templates/**/*.{html,mustache}'
     },
     dest: {
-        html: 'styleguide/',
-        templates: 'styleguide/templates'
+        html: 'dist/',
+        templates: 'dist/templates'
     },
     site: {
         title: 'Styleguide'
