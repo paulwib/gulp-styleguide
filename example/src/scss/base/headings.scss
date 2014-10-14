@@ -1,16 +1,4 @@
 /**
- * @name Base styles
- * @description These are your basic text styles
- */
-$lineHeight: 24;
-
-body {
-    background: #fff;
-    color: #000;
-    font-family: Helevtica, Arial, sans-serif;
-}
-
-/**
  * @name Headings
  * @description Headings h1...h6:
  * @markup
@@ -65,3 +53,4 @@ p {
     font-size: 16px;
     line-height: $lineHeight/16;
 }
+

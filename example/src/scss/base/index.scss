@@ -1,0 +1,13 @@
+/**
+ * @name Base styles
+ * @description These are your basic text styles
+ */
+$lineHeight: 24;
+
+body {
+    background: #fff;
+    color: #000;
+    font-family: Helevtica, Arial, sans-serif;
+}
+
+@import "./headings.scss";

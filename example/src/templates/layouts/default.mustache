@@ -12,13 +12,11 @@
     </header>
 
     <nav>
-      <ul>
-        {{#site.index.files}}
-          {{^meta.isIndex}}
-          <li><a href="{{meta.url}}">{{meta.name}}</a></li>
-          {{/meta.isIndex}}
-        {{/site.index.files}}
-      </ul>
+    <ul>
+      {{#site.index.sections}}
+      <li><a href="{{url}}">{{name}}</a></li>
+      {{/site.index.sections}}
+    </ul>
     </nav>
 
     <hr>

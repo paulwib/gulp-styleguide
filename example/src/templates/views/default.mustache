@@ -2,24 +2,44 @@
 
   {{$content}}
 
+  {{! The content block to insert into layout }}
+
+    {{! The name of the file, which should be an index.scss }}
     <h2>{{meta.name}}</h2>
 
+    {{! The block in the index.scss, which should *not* contain any mark-up, just import it's files }}
     {{#dss}}
         {{#blocks}}
             {{#name}}
                <h3>{{name}}</h3>
             {{/name}}
-
             {{{description}}}
-
-            {{{markup.example}}}
-
         {{/blocks}}
     {{/dss}}
 
+    {{! If no DSS at all this is a markdown index }}
     {{^dss}}
         {{{content}}}
     {{/dss}}
+
+    {{! Embed examples from all the files in this section, ignoring indexes }}
+    {{#meta.section.files}}
+      {{^meta.isIndex}}
+        {{#dss}}
+            {{#blocks}}
+                {{#name}}
+                   <h3>{{name}}</h3>
+                {{/name}}
+
+                {{{description}}}
+
+                {{{markup.example}}}
+
+            {{/blocks}}
+        {{/dss}}
+
+      {{/meta.isIndex}}
+    {{/meta.section.files}}
 
   {{/content}}
 
