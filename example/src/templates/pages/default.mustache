@@ -1,0 +1,25 @@
+{{<layouts/default}}
+
+  {{$content}}
+
+  {{! The content block to insert into layout }}
+
+    {{! Just show DSS for the current file }}
+    {{#dss}}
+        {{#blocks}}
+
+            {{#name}}
+               <h2>{{name}}</h2>
+            {{/name}}
+
+            {{{description}}}
+
+            {{{markup.example}}}
+
+        {{/blocks}}
+    {{/dss}}
+
+  {{/content}}
+
+{{/layouts/default}}
+

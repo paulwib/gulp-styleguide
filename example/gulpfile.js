@@ -23,7 +23,7 @@ var options = require('../styleguide').setup({
         scss: 'src/scss/index.scss'
     },
     dest: {
-        css: 'src/dist/css'
+        css: 'dist/css'
     }
 });
 

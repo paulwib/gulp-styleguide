@@ -1,0 +1,39 @@
+/**
+ * @name Liquid grid layout
+ * @description Use `.container`, `.column` and `.column-[n]` to create grids
+ * @markup
+ * <div class="container">
+ *   <div class="column column-1">1</div>
+ *   <div class="column column-2">2</div>
+ *   <div class="column column-3">3</div>
+ *   <div class="column column-4">4</div>
+ * </div>
+ */
+
+.container {
+   display: block;
+   width: 100%;
+}
+
+.column {
+    display: block;
+    float: left;
+    box-sizing: border-box;
+    padding: 10px;
+
+    &:before,
+    &:after {
+        content:"";
+        display:table;
+    }
+    &:after {
+        clear:both;
+    }
+}
+
+@for $i from 1 through 10 {
+    .column-#{$i} {
+        width: $i * 10%;
+    }
+}
+

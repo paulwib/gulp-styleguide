@@ -4,14 +4,11 @@
 
   {{! The content block to insert into layout }}
 
-    {{! The name of the file, which should be an index.scss }}
-    <h2>{{meta.name}}</h2>
-
     {{! The block in the index.scss, which should *not* contain any mark-up, just import it's files }}
     {{#dss}}
         {{#blocks}}
             {{#name}}
-               <h3>{{name}}</h3>
+               <h2>{{name}}</h2>
             {{/name}}
             {{{description}}}
         {{/blocks}}
@@ -28,7 +25,7 @@
         {{#dss}}
             {{#blocks}}
                 {{#name}}
-                   <h3>{{name}}</h3>
+                    <h3><a href="{{meta.url}}">{{name}}</a></h3>
                 {{/name}}
 
                 {{{description}}}
