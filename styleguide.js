@@ -106,7 +106,7 @@ function build(options) {
         return gulp.src(options.src.css)
             .pipe(filter)
             .pipe(extract())
-            .pipe(ssg(options.site))
+            .pipe(ssg(options.site, { sectionProperties: ['sectionName'] }))
             .pipe(template(options.site, templates))
             .pipe(gulp.dest(options.dest.html));
     };
@@ -164,23 +164,19 @@ function extract() {
             return this.emit('error', new gutil.PluginError('gulp-dss',  'Streaming not supported'));
         }
         file.meta = {};
-        // Skip the markdown files
-        if (file.path.match(/\.md$/)) {
-            cb(null, file);
-            return;
-        }
+
         // Parse the DSS
-        dss.parse(file.contents.toString(), {}, function(dssParsed) {
-            file.dss = dssParsed;
-            if (file.dss.blocks.length) {
-                file.meta.name = file.dss.blocks[0].name;
-                delete file.dss.blocks[0].name;
+        dss.parse(file.contents.toString(), {}, function(dss) {
+            // Get section name from first blocks name, will be copied to site.index.sections[...]
+            if (dss.blocks.length) {
+                file.meta.sectionName = dss.blocks[0].name;
             }
-            file.dss.blocks.forEach(function(block) {
+            dss.blocks.forEach(function(block) {
                 if (block.hasOwnProperty('description')) {
                     block.description = markdown(String(block.description));
                 }
             });
+            file.dss = dss;
             cb(null, file);
         });
     });
@@ -193,12 +189,16 @@ function template(site, templates) {
 
     return es.map(function(file, cb) {
 
-        var content, view = templates['views/default'];
+        var content, template;
 
-        if (!file.hasOwnProperty('dss')) {
-            content = markdown(String(file.contents));
+        if (file.meta.isIndex) {
+            template = templates['pages/index'];
         }
-        var html = view.render({
+        else {
+            template = templates['pages/default'];
+        }
+
+        var html = template.render({
             meta: file.meta,
             dss: file.dss,
             site: site,
