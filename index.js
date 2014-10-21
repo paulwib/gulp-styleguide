@@ -54,7 +54,13 @@ function build(options) {
         return gulp.src(options.src.templates)
             .pipe(templateCompile());
     });
-    gulp.task('styleguide.build', ['styleguide.templates'], html(options));
+    gulp.task('styleguide.build', ['styleguide.templates'], function() {
+        return gulp.src(options.src.css)
+            .pipe(extract())
+            .pipe(ssg(options.site, { sectionProperties: ['sectionName'] }))
+            .pipe(render(options.site, compiledTemplates))
+            .pipe(gulp.dest(options.dest.html));
+    });
 
     return ['styleguide.templates', 'styleguide.build'];
 }
@@ -79,21 +85,6 @@ function templateCompile() {
 
         cb(null, file);
     });
-}
-
-/**
- * Task to extract DSS and build the main HTML output
- */
-function html(options) {
-
-    return function() {
-
-        return gulp.src(options.src.css)
-            .pipe(extract())
-            .pipe(ssg(options.site, { sectionProperties: ['sectionName'] }))
-            .pipe(render(options.site, compiledTemplates))
-            .pipe(gulp.dest(options.dest.html));
-    };
 }
 
 /**

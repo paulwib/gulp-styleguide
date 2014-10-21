@@ -10,17 +10,16 @@
     "event-stream": "^3.1.5",
     "extend": "^1.2.1",
     "gulp": "^3.7.0",
-    "gulp-clean": "^0.3.1",
     "gulp-hogan-compile": "^0.2.1",
     "gulp-livereload": "^2.1.0",
     "gulp-ssg": "^0.4.5",
     "gulp-util": "^3.0.0",
     "hogan-updated": "^3.1.0",
-    "hogan.js": "^3.0.2",
     "marked": "^0.3.2",
     "through": "^2.3.4"
   },
   "devDependencies": {
+    "del": "^0.1.3",
     "gulp-sass": "^0.7.2"
   }
 }

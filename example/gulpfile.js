@@ -29,4 +29,4 @@ gulp.task('clean', function(cb) {
 });
 
 // Default build task
-gulp.task('default', ['clean', 'sass', 'styleguide']);
+gulp.task('default', ['sass', 'styleguide']);
