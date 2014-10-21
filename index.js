@@ -13,14 +13,15 @@ var http = require('http');
 var livereload = require('gulp-livereload');
 var markdown = require('marked');
 var ssg = require('gulp-ssg');
-var templateCompiler = require('gulp-hogan-compile');
+var hogan = require('hogan-updated');
 var through = require('through');
 var path = require('path');
 
+// Default options
 var defaultOptions = {
     server: {
         port: 8745,
-        documentRoot: 'dist/public',
+        documentRoot: 'dist/',
         watchPaths: ['src/scss/**/*.{css,less,scss}', __dirname + '/templates/**/*.{mustache,html}'],
         reloadPaths: ['dist/**/*'],
         watchTasks: ['styleguide.templates', 'styleguide.build']
@@ -31,7 +32,7 @@ var defaultOptions = {
             templates: __dirname + '/templates/**/*.{mustache,html}'
         },
         dest: {
-            html: 'dist/public',
+            html: 'dist/',
             templates: 'dist/templates'
         },
         site: {
@@ -40,38 +41,44 @@ var defaultOptions = {
     }
 };
 
+// Somewhere to store compiled templates
+var compiledTemplates = {};
+
+/**
+ * Build combines 2 tasks: compile the templates and build the HTML
+ */
 function build(options) {
     options = extend(true, defaultOptions.build, options);
 
-    gulp.task('styleguide.templates', compileTemplates(options));
+    gulp.task('styleguide.templates', function() {
+        return gulp.src(options.src.templates)
+            .pipe(templateCompile());
+    });
     gulp.task('styleguide.build', ['styleguide.templates'], html(options));
 
     return ['styleguide.templates', 'styleguide.build'];
 }
 
 /**
- * Task to compile the templates
- *
- * The main point of pre-compiling templates is so you have a full set of
- * partials available. It also means templates are reloaded when viewing on
- * preview server.
+ * Pipe for compiling templates, stored in compiledTemplates, no files output
  */
-function compileTemplates(options) {
+function templateCompile() {
 
-    return function() {
-        return gulp.src(options.src.templates)
-            .pipe(templateCompiler('index.js', {
-                wrapper: 'commonjs',
-                hoganModule: 'hogan.js',
-                templateName: function (file) {
-                    return path.join(
-                        path.dirname(file.relative),
-                        path.basename(file.relative, path.extname(file.relative))
-                    );
-                }
-            }))
-            .pipe(gulp.dest(options.dest.templates));
-    };
+    return es.map(function(file, cb) {
+        if (file.isNull()) {
+            return;
+        }
+        if (file.isStream()) {
+            return this.emit('error', new gutil.PluginError('gulp-styleguide',  'Streaming not supported'));
+        }
+        var templateName = path.join(
+            path.dirname(file.relative),
+            path.basename(file.relative, path.extname(file.relative))
+        );
+        compiledTemplates[templateName] = hogan.compile(file.contents.toString('utf8'));
+
+        cb(null, file);
+    });
 }
 
 /**
@@ -80,13 +87,11 @@ function compileTemplates(options) {
 function html(options) {
 
     return function() {
-        var templates = require(process.cwd() + '/' + options.dest.templates);
-        delete require.cache[process.cwd() + '/' + options.dest.templates + '/index.js'];
 
         return gulp.src(options.src.css)
             .pipe(extract())
             .pipe(ssg(options.site, { sectionProperties: ['sectionName'] }))
-            .pipe(template(options.site, templates))
+            .pipe(render(options.site, compiledTemplates))
             .pipe(gulp.dest(options.dest.html));
     };
 }
@@ -127,12 +132,12 @@ function extract() {
             return;
         }
         if (file.isStream()) {
-            return this.emit('error', new gutil.PluginError('gulp-dss',  'Streaming not supported'));
+            return this.emit('error', new gutil.PluginError('gulp-styleguide',  'Streaming not supported'));
         }
         file.meta = {};
 
-        // Parse the DSS
         dss.parse(file.contents.toString(), {}, function(dss) {
+
             // Get section name from first blocks name, will be copied to site.index.sections[...]
             if (dss.blocks.length) {
                 file.meta.sectionName = dss.blocks[0].name;
@@ -149,9 +154,9 @@ function extract() {
 }
 
 /**
- * Pipe for templating
+ * Pipe for rendering templates with data
  */
-function template(site, templates) {
+function render(site, templates) {
 
     return es.map(function(file, cb) {
 
@@ -172,6 +177,7 @@ function template(site, templates) {
         }, templates);
 
         file.contents = new Buffer(html);
+
         cb(null, file);
     });
 }

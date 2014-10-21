@@ -20,7 +20,7 @@ gulp.task('server', ['clean', 'default'], styleguide.server({ watchTasks: ['defa
 gulp.task('sass', ['styleguide'], function () {
     return gulp.src('src/scss/index.scss')
         .pipe(sass())
-        .pipe(gulp.dest('dist/public/css'));
+        .pipe(gulp.dest('dist/css'));
 });
 
 // Clean dist
