@@ -8,7 +8,7 @@ var del = require('del');
 // Add styleguide task
 var options = {
     site: {
-        title: 'Test Pattern Library'
+        title: 'Test Styleguide'
     },
 };
 gulp.task('styleguide', styleguide.build(options));
