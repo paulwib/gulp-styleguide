@@ -21,14 +21,14 @@ var defaultOptions = {
     server: {
         port: 8745,
         documentRoot: 'dist/public',
-        watchPaths: ['src/scss/**/*.{css,less,scss}', 'src/templates/**/*.{mustache,html}'],
+        watchPaths: ['src/scss/**/*.{css,less,scss}', __dirname + '/templates/**/*.{mustache,html}'],
         reloadPaths: ['dist/**/*'],
         watchTasks: ['styleguide.templates', 'styleguide.build']
     },
     build: {
         src: {
             css: 'src/scss/**/*.{css,less,scss}',
-            templates: 'src/templates/**/*.{mustache,html}'
+            templates: __dirname + '/templates/**/*.{mustache,html}'
         },
         dest: {
             html: 'dist/public',
