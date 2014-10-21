@@ -3,7 +3,6 @@
 /**
  * A gulp pipeline for generating a styleguide from DSS comments
  */
-var clean = require('gulp-clean');
 var dss = require('dss');
 var ecstatic = require('ecstatic');
 var es = require('event-stream');
@@ -20,48 +19,35 @@ var path = require('path');
 var gulpFilter = require('gulp-filter');
 
 var defaultOptions = {
-    taskNames: {
-        main: 'styleguide',
-        templates: 'styleguide.templates',
-        build: 'styleguide.build',
-        server: 'styleguide.server',
-        clean: 'styleguide.clean'
+    server: {
+        port: 8745,
+        documentRoot: 'dist/public',
+        watchPaths: ['src/scss/**/*.{css,less,scss}', 'src/templates/**/*.{mustache,html}'],
+        reloadPaths: ['dist/**/*'],
+        watchTasks: ['styleguide.templates', 'styleguide.build']
     },
-    watchPaths: [],
-    watchTasks: [],
-    src: {
-        css: 'src/scss/**/*.{scss,md}',
-        templates: 'src/templates/**/*.{html,mustache}'
-    },
-    dest: {
-        html: 'dist/',
-        templates: 'dist/templates'
-    },
-    site: {
-        title: 'Styleguide'
+    build: {
+        src: {
+            css: 'src/scss/**/*.{css,less,scss}',
+            templates: 'src/templates/**/*.{mustache,html}'
+        },
+        dest: {
+            html: 'dist/public',
+            templates: 'dist/templates'
+        },
+        site: {
+            title: 'Styleguide'
+        }
     }
 };
 
-/**
- * Set-up the default set of tasks
- *
- * If not flexible enough then build your own pipeline, it's not too hard :)
- */
-function setup(options) {
+function build(options) {
+    options = extend(true, defaultOptions.build, options);
 
-    options = extend(true, defaultOptions, options);
-    var tasks = options.taskNames;
+    gulp.task('styleguide.templates', compileTemplates(options));
+    gulp.task('styleguide.build', ['styleguide.templates'], html(options));
 
-    options.watchPaths.push(options.src.css, options.src.templates);
-    options.watchTasks.unshift(tasks.main);
-
-    gulp.task(tasks.clean, cleanup(options));
-    gulp.task(tasks.templates, [tasks.clean], compileTemplates(options));
-    gulp.task(tasks.build, [tasks.templates], build(options));
-    gulp.task(tasks.server, [tasks.build], server(options));
-    gulp.task(tasks.main, [tasks.clean, tasks.build]);
-
-    return options;
+    return ['styleguide.templates', 'styleguide.build'];
 }
 
 /**
@@ -90,9 +76,9 @@ function compileTemplates(options) {
 }
 
 /**
- * Task to build the HTML output
+ * Task to extract DSS and build the main HTML output
  */
-function build(options) {
+function html(options) {
 
     return function() {
         var templates = require(process.cwd() + '/' + options.dest.templates);
@@ -114,40 +100,27 @@ function build(options) {
 
 /**
  * Task to start server to view the guide, watch for changes and livereload
+ * (livereload requires a browser plug-in)
  */
 function server(options) {
+
+    options = extend(true, defaultOptions.server, options);
 
     return function() {
         gulp.watch(options.watchPaths, options.watchTasks);
 
-        // Create a server for previewing
-        var port = 8745;
         http.createServer(
-            ecstatic({ root: options.dest.html })
-        ).listen(port);
-        gutil.log('Preview website running on http://localhost:' + gutil.colors.magenta(port));
-        gutil.log('Watching paths: ' + gutil.colors.magenta(options.watchPaths.join(', ')));
-        gutil.log('Watch runs tasks: ' + gutil.colors.magenta(options.watchTasks.join(', ')));
+            ecstatic({ root: options.documentRoot })
+        ).listen(options.port);
+        gutil.log('Preview website running on http://localhost:' + gutil.colors.magenta(options.port));
 
-        // Live reload when files change (requires browser plug-in)
         if(process.platform !== 'win32') {
-            gutil.log('Running livereload, watching: ' + gutil.colors.magenta(options.dest.html));
+            gutil.log('Running livereload, watching: ' + gutil.colors.magenta(options.reloadPaths));
             var server = livereload();
-            gulp.watch(options.dest.html + '/**').on('change', function(file) {
+            gulp.watch(options.reloadPaths).on('change', function(file) {
                 server.changed(file.path);
             });
         }
-    };
-}
-
-/**
- * Task to clean up generated files
- */
-function cleanup(options) {
-
-    return function() {
-        return gulp.src([options.dest.html], { read: false })
-            .pipe(clean());
     };
 }
 
@@ -211,8 +184,9 @@ function template(site, templates) {
 }
 
 /**
- * Export the task setup function
+ * Export the available tasks
  */
 module.exports = {
-    setup: setup
+    build: build,
+    server: server
 };

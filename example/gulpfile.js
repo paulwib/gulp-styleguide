@@ -2,40 +2,31 @@
 
 var gulp = require('gulp');
 var sass = require('gulp-sass');
+var styleguide = require('../');
+var del = require('del');
 
-// Set up styleguide pipeline, returns merged options
-var options = require('../').setup({
-
-    // Website configuration
+// Add styleguide task
+var options = {
     site: {
         title: 'Test Pattern Library'
     },
+};
+gulp.task('styleguide', styleguide.build(options));
 
-    // Add paths to watch
-    watchPaths: [],
+// Add server to preview style guide and livereload
+gulp.task('server', ['clean', 'default'], styleguide.server({ watchTasks: ['default'] }));
 
-    // Add tasks to run on change
-    watchTasks: ['sass'],
-
-    // These paths aren't in the regular options, but we can add them for convenience
-    // to have all our paths in one object
-    src: {
-        scss: 'src/scss/index.scss'
-    },
-    dest: {
-        css: 'dist/css'
-    }
+// Add SASS task (remember styleguide does not convert assets, only extracts data for HTML)
+gulp.task('sass', ['styleguide'], function () {
+    return gulp.src('src/scss/index.scss')
+        .pipe(sass())
+        .pipe(gulp.dest('dist/public/css'));
 });
 
-// Convert SCSS to CSS, because that's what this example uses
-// You could use LESS or plain CSS instead, as long as you configure
-// source directories correctly.
-// Remember, this pipline does *no* asset processing.
-gulp.task('sass', ['styleguide'], function () {
-    return gulp.src(options.src.scss)
-        .pipe(sass())
-        .pipe(gulp.dest(options.dest.css));
+// Clean dist
+gulp.task('clean', function(cb) {
+    return del('dist/**/*', cb);
 });
 
 // Default build task
-gulp.task('default', ['sass', 'styleguide']);
+gulp.task('default', ['clean', 'sass', 'styleguide']);
