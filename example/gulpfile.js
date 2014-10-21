@@ -4,7 +4,7 @@ var gulp = require('gulp');
 var sass = require('gulp-sass');
 
 // Set up styleguide pipeline, returns merged options
-var options = require('../styleguide').setup({
+var options = require('../').setup({
 
     // Website configuration
     site: {
