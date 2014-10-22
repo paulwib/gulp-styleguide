@@ -134,12 +134,21 @@ function extract() {
             return this.emit('error', new gutil.PluginError('gulp-styleguide',  'Streaming not supported'));
         }
         file.meta = {};
+        var basename = path.basename(file.relative, path.extname(file.path));
 
         dss.parse(file.contents.toString(), {}, function(dss) {
 
-            // Get section name from first blocks name, will be copied to site.index.sections[...]
             if (dss.blocks.length) {
-                file.meta.sectionName = dss.blocks[0].name;
+
+                // Get section name from index
+                if (basename === 'index') {
+                    file.meta.sectionName = dss.blocks[0].name;
+                }
+                // Get sub-section name from first blocks name (and delete name to avoid repetition)
+                else {
+                    file.meta.subsectionName = dss.blocks[0].name;
+                    delete dss.blocks[0].name;
+                }
                 if (dss.blocks[0].order) {
                     file.meta.order = dss.blocks[0].order;
                 }

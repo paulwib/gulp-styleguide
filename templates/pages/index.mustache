@@ -8,7 +8,7 @@
     {{#dss}}
         {{#blocks}}
             {{#name}}
-               <h2>{{name}}</h2>
+            <h2><a href="{{meta.url}}">{{name}}</a></h2>
             {{/name}}
             {{{description}}}
         {{/blocks}}
@@ -23,10 +23,11 @@
     {{#meta.section.files}}
       {{^meta.isIndex}}
         <a name="{{meta.name}}"></a>
+        <h3><a href="{{meta.url}}">{{meta.subsectionName}}</a></h3>
         {{#dss}}
             {{#blocks}}
                 {{#name}}
-                    <h3><a href="{{meta.url}}">{{name}}</a></h3>
+                    <h4>{{name}}</h3>
                 {{/name}}
 
                 {{{description}}}

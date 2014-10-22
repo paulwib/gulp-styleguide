@@ -1,0 +1,20 @@
+/**
+ * @name Forms
+ * @description
+ * @order 3
+ */
+
+/**
+ * @name Input fields
+ * @state :focus - Focussed input
+ * @markup
+ * <label>Text:</label> <input type="text">
+ */
+input {
+    border: 1px solid silver;
+    border-radius: 3px;
+    line-height: inherit;
+    font-family: inherit;
+    font-size: inherit;
+}
+
