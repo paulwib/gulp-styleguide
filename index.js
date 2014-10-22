@@ -17,6 +17,11 @@ var hogan = require('hogan-updated');
 var through = require('through');
 var path = require('path');
 
+// Set up some additional parsers
+dss.parser('order', function(i, line, block){
+  return line;
+});
+
 // Default options
 var defaultOptions = {
     server: {
@@ -57,7 +62,10 @@ function build(options) {
     gulp.task('styleguide.build', ['styleguide.templates'], function() {
         return gulp.src(options.src.css)
             .pipe(extract())
-            .pipe(ssg(options.site, { sectionProperties: ['sectionName'] }))
+            .pipe(ssg(options.site, {
+                sectionProperties: ['sectionName'],
+                sort: 'order'
+            }))
             .pipe(render(options.site, compiledTemplates))
             .pipe(gulp.dest(options.dest.html));
     });
@@ -132,6 +140,9 @@ function extract() {
             // Get section name from first blocks name, will be copied to site.index.sections[...]
             if (dss.blocks.length) {
                 file.meta.sectionName = dss.blocks[0].name;
+                if (dss.blocks[0].order) {
+                    file.meta.order = dss.blocks[0].order;
+                }
             }
             dss.blocks.forEach(function(block) {
                 if (block.hasOwnProperty('description')) {

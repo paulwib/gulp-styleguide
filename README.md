@@ -35,7 +35,7 @@ This is really only for convenience, you may find it more useful to write your o
 * `src.templates` - Path to your Mustache templates. Optional, defaults to path to `templates/` in this library.
 * `dest.html` - Path to output HTML to. Optional, defaults to `dist/`.
 * `site` - An object to contain the outputted website. This can contain any variables you want to make available to your templates. It will have an `index` property appended which contains the site tree, more on that below. Optional, defaults to `{ site: { title: 'Styleguide' } }`.
- 
+
 ### `styleguide.server(options)`
 
 * `port` - Port to run server on. Optional, defaults to 8745.
@@ -85,6 +85,11 @@ There are a number of preset variables available:
 
 You can add any other variables you like to `site` by passing it with the options, just be careful not to override.
 
+## Custom DSS Parsers
+
+These parsers are added in addition to default name, description, states and markup:
+
+* `@order` - Set the files sort order, lower numbers will come first in the site index.
 
 ## What this doesn't do
 
