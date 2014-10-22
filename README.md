@@ -89,7 +89,7 @@ You can add any other variables you like to `site` by passing it with the option
 
 These parsers are added in addition to default name, description, states and markup:
 
-* `@order` - Set the files sort order, lower numbers will come first in the site index.
+* `@order` - Set the files sort order, lower numbers will come first. This allows you to order sections and files (when combining several on one HTML page). Taken from the first DSS block in the file i.e. not for sorting within files.
 
 ## What this doesn't do
 
