@@ -46,7 +46,7 @@ This is really only for convenience, you may find it more useful to write your o
 
 ## File Structure
 
-The structure of the HTML reflects the structure of your CSS. For that reason it's nice to separate your CSS into directories that reflect the purpose of the CSS. Here's an example using SCSS and a SMACSS structure:
+The structure of the HTML reflects the structure of your CSS. For that reason it's nice to separate your CSS into directories that reflect the purpose of the CSS. Here's an example using SCSS and a [SMACSS][] structure:
 
     scss/
         index.scss
@@ -73,17 +73,17 @@ By convention the `index.scss` should only have minimal CSS and import the rest 
 
 ## Templating
 
-Templates our written in Mustache. there are a number of preset variables available:
+Templates our written in Mustache. There are 2 required templates `page/default.mustache` and `page/index.mustache`. The `default` page is used for rendering the content from a single CSS file. The `index` page is used for each directory index. The packaged version will render all the files for a particular section.
 
-* `site.index` - This contains a full content-tree of the entire styleguide. This is built with [gulp-ssg][] so see the documentation there for more info, but basically it allows you to do things like make navigation, render sub-pages in pages etc.
-* `meta` - Each file has a `meta` property that contains things like the `url`. Again see the [gulp-ssg] documentation for full dtails and information on how you can add your own properties.
-* `dss` - Each file has a `dss` property, see the [DSS][] documentation for mor einfo about what that contains.
+You are free to override with your own templates, add layout and partials etc. provided you have the 2 required templates. See the `templates/` directory for an example.
 
-You can also add any other variables you like to `site` by passing it with the options, just be careful not to override.
+There are a number of preset variables available:
 
-There are 2 required templates `page/default.mustache` and `page/index.mustache`. The `default` page is used for rendering the content from a single CSS file. The `index` page is used for each directory index. The packaged version will render all the files for a particular section.
+* `site.index` - This contains a full content-tree of the entire styleguide. This is built with [gulp-ssg][] - see the documentation for more info, but basically it allows you to do things like make navigation, render sub-pages in pages etc.
+* `meta` - Each file has a `meta` property that contains things like the `url`. Again see the [gulp-ssg][] documentation for full details and information on how you can add your own properties.
+* `dss` - Each file has a `dss` property, see the [DSS][] documentation for more info about what that contains.
 
-You are free to override with your own templates, provided you have the 2 required templates. See the `templates/` directory for an example.
+You can add any other variables you like to `site` by passing it with the options, just be careful not to override.
 
 
 ## What this doesn't do
@@ -98,6 +98,7 @@ The general philosophy is not to do *any* processing of your assets. It will onl
 
 You should add any additional steps for processing your assets to your own gulpfile.
 
+[SMACSS]:https://smacss.com/
 [DSS]:https://github.com/darcyclarke/DSS
 [gulp-ssg]:https://github.com/paulwib/gulp-ssg
 
