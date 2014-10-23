@@ -7,6 +7,7 @@
 /**
  * @name Input fields
  * @state :focus - Focussed state
+ * @state .error - Error state
  * @markup
  * <form><label>Label:</label> <input type="text" {{{state}}}></form>
  */
@@ -16,5 +17,14 @@ input {
     line-height: inherit;
     font-family: inherit;
     font-size: inherit;
+
+    &:focus {
+      outline: none;
+      border: 1px solid gray;
+    }
+}
+
+input.error {
+    background: red;
 }
 
