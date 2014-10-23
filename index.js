@@ -126,6 +126,8 @@ function server(options) {
  */
 function extract() {
 
+    var template, stateExample, stateEscaped;
+
     return es.map(function(file, cb) {
         if (file.isNull()) {
             return;
@@ -156,6 +158,21 @@ function extract() {
             dss.blocks.forEach(function(block) {
                 if (block.hasOwnProperty('description')) {
                     block.description = markdown(String(block.description));
+                }
+                if (block.hasOwnProperty('state')) {
+                    // Normalize state to an array (by default one state is an object)
+                    if (typeof block.state.forEach !== 'function') {
+                        block.state = [block.state];
+                    }
+                    template = hogan.compile(block.markup.example);
+                    block.state.forEach(function(state) {
+                        stateExample = template.render({ state: 'class="' + state.escaped + '"'});
+                        stateEscaped = stateExample.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                        state.markup = {
+                            example: stateExample,
+                            escaped: stateEscaped
+                        };
+                    });
                 }
             });
             file.dss = dss;

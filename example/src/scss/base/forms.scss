@@ -1,14 +1,14 @@
 /**
  * @name Forms
- * @description
+ * @description Various from elements
  * @order 3
  */
 
 /**
  * @name Input fields
- * @state :focus - Focussed input
+ * @state :focus - Focussed state
  * @markup
- * <label>Text:</label> <input type="text">
+ * <form><label>Label:</label> <input type="text" {{{state}}}></form>
  */
 input {
     border: 1px solid silver;

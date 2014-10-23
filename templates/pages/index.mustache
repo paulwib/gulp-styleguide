@@ -27,12 +27,23 @@
         {{#dss}}
             {{#blocks}}
                 {{#name}}
-                    <h4>{{name}}</h3>
+                    <h4>{{name}}</h4>
                 {{/name}}
 
-                {{{description}}}
+                <div class="styleguide-example">
+                  <div class="styleguide-description">
+                  {{{description}}}
+                  </div>
+                  {{{markup.example}}}
+                </div>
 
-                {{{markup.example}}}
+                {{#state}}
+                  <div class="styleguide-example">
+                    <div class="styleguide-state-description">{{description}}:</div>
+                    <!--<div class="styleguide-state-name">{{name}}</div>-->
+                    {{{markup.example}}}
+                  </div>
+                {{/state}}
 
             {{/blocks}}
         {{/dss}}
