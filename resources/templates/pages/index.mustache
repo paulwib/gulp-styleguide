@@ -26,25 +26,7 @@
         <h3><a href="{{meta.url}}">{{meta.subsectionName}}</a></h3>
         {{#dss}}
             {{#blocks}}
-                {{#name}}
-                    <h4>{{name}}</h4>
-                {{/name}}
-
-                <div class="styleguide-example">
-                  <div class="styleguide-description">
-                  {{{description}}}
-                  </div>
-                  {{{markup.example}}}
-                </div>
-
-                {{#state}}
-                  <div class="styleguide-example">
-                    <div class="styleguide-state-description">{{description}}:</div>
-                    <!--<div class="styleguide-state-name">{{name}}</div>-->
-                    {{{markup.example}}}
-                  </div>
-                {{/state}}
-
+                {{>partials/dss-block}}
             {{/blocks}}
         {{/dss}}
 

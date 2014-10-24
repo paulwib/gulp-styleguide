@@ -9,15 +9,7 @@
     {{! Just show DSS for the current file }}
     {{#dss}}
         {{#blocks}}
-
-            {{#name}}
-               <h3>{{name}}</h3>
-            {{/name}}
-
-            {{{description}}}
-
-            {{{markup.example}}}
-
+            {{>partials/dss-block}}
         {{/blocks}}
     {{/dss}}
 
