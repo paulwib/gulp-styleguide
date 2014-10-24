@@ -169,13 +169,13 @@ function extract() {
                 if (block.hasOwnProperty('description')) {
                     block.description = markdown(String(block.description));
                 }
-                // A partial annotation creates a lambda on this block to use that template
-                // Add {{partial}} to a custom template to use it
+                // @partial creates a lambda on this block to inject custom partial,
+                // use {{#partial}}{{/partial}} in your template
                 if (block.hasOwnProperty('partial')) {
-                    var partialName = block.partial;
+                    var partialTag = '{{>' + block.partial + '}}';
                     block.partial = function() {
                         return function() {
-                            return compiledTemplates[partialName].render(this);
+                            return partialTag;
                         };
                     };
                 }
