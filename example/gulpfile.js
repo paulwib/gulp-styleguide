@@ -10,6 +10,10 @@ var options = {
     site: {
         title: 'Test Styleguide'
     },
+	src: {
+        // Add custom templates
+	    templates: ['resources/templates/**/*.mustache', styleguide.defaultOptions.build.src.templates]
+	}
 };
 gulp.task('styleguide', styleguide.build(options));
 

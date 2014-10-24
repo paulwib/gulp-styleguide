@@ -17,9 +17,12 @@ var hogan = require('hogan-updated');
 var through = require('through');
 var path = require('path');
 
-// Set up some additional parsers
-dss.parser('order', function(i, line, block){
-  return line;
+// Set up some additional parsers for properties to be copied to the file
+var fileMetaProps = ['order', 'template'];
+fileMetaProps.forEach(function(prop) {
+    dss.parser(prop, function(i, line, block){
+      return line;
+    });
 });
 
 // Default options
@@ -151,15 +154,18 @@ function extract() {
                     file.meta.subsectionName = dss.blocks[0].name;
                     delete dss.blocks[0].name;
                 }
-                if (dss.blocks[0].order) {
-                    file.meta.order = dss.blocks[0].order;
-                }
+                // Properties to copy from first block that apply to whole file
+                fileMetaProps.forEach(function(prop) {
+                    if (dss.blocks[0][prop]) {
+                        file.meta[prop] = dss.blocks[0][prop];
+                    }
+                });
             }
             dss.blocks.forEach(function(block) {
                 if (block.hasOwnProperty('description')) {
                     block.description = markdown(String(block.description));
                 }
-                if (block.hasOwnProperty('state')) {
+                if (block.hasOwnProperty('state') && block.hasOwnProperty('markup')) {
                     // Normalize state to an array (by default one state is an object)
                     if (typeof block.state.slice !== 'function') {
                         block.state = [block.state];
@@ -194,23 +200,30 @@ function render(site, templates) {
 
     return es.map(function(file, cb) {
 
-        var content, template;
+        var content, templateName;
 
-        if (file.meta.isIndex) {
-            template = templates['pages/index'];
+        if (file.meta.template) {
+            templateName = file.meta.template;
+        }
+        else if (file.meta.isIndex) {
+            templateName = 'pages/index';
         }
         else {
-            template = templates['pages/default'];
+            templateName = 'pages/default';
         }
+        try {
+            var html = templates[templateName].render({
+                meta: file.meta,
+                dss: file.dss,
+                site: site,
+                content: content
+            }, templates);
 
-        var html = template.render({
-            meta: file.meta,
-            dss: file.dss,
-            site: site,
-            content: content
-        }, templates);
+            file.contents = new Buffer(html);
 
-        file.contents = new Buffer(html);
+        } catch (e) {
+            throw new Error('Template "' + templateName + '" failed to render, invalid or missing');
+        }
 
         cb(null, file);
     });
@@ -221,5 +234,6 @@ function render(site, templates) {
  */
 module.exports = {
     build: build,
-    server: server
+    server: server,
+    defaultOptions: defaultOptions
 };
