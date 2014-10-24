@@ -1,0 +1,38 @@
+{{<layouts/default}}
+
+  {{$content}}
+
+  {{! The content block to insert into layout }}
+
+    {{! The block in the index.scss, which should *not* contain any mark-up, just import it's files }}
+    {{#dss}}
+        {{#blocks}}
+            {{#name}}
+            <h2><a href="{{meta.url}}">{{name}}</a></h2>
+            {{/name}}
+        {{/blocks}}
+    {{/dss}}
+
+    {{! Embed examples from all the files in this section, ignoring indexes }}
+    {{#meta.section.files}}
+      {{^meta.isIndex}}
+        <a name="{{meta.name}}"></a>
+        <h3><a href="{{meta.url}}">{{meta.subsectionName}}</a></h3>
+        {{#dss}}
+            {{#blocks}}
+                {{#state}}
+                  <div class="styleguide-color">
+                      <div class="styleguide-color-block" style="background-color: {{escaped}}">block</div>
+                      <div class="styleguide-color-description">{{description}}: {{escaped}}</div>
+                  </div>
+                {{/state}}
+            {{/blocks}}
+        {{/dss}}
+
+      {{/meta.isIndex}}
+    {{/meta.section.files}}
+
+  {{/content}}
+
+{{/layouts/default}}
+
