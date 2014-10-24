@@ -9,7 +9,7 @@
  * @state :hover - Hover state
  * @state .error - Error state
  * @markup
- * <form><label>Label:</label> <input type="text" {{{state}}}></form>
+ * <form><label>Label:</label> <input type="text" class="{{{escaped}}}"></form>
  */
 input {
     border: 1px solid silver;

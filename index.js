@@ -161,12 +161,18 @@ function extract() {
                 }
                 if (block.hasOwnProperty('state')) {
                     // Normalize state to an array (by default one state is an object)
-                    if (typeof block.state.forEach !== 'function') {
+                    if (typeof block.state.slice !== 'function') {
                         block.state = [block.state];
                     }
                     template = hogan.compile(block.markup.example);
+
+                    // Render once with no state (stripping empty attributes)
+                    block.markup.example = template.render({}).replace(/[a-z]+="\s*"/gi, '');
+                    block.markup.escaped = block.markup.example.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+                    // Render template again for each state
                     block.state.forEach(function(state) {
-                        stateExample = template.render({ state: 'class="' + state.escaped + '"'});
+                        stateExample = template.render(state);
                         stateEscaped = stateExample.replace(/</g, '&lt;').replace(/>/g, '&gt;');
                         state.markup = {
                             example: stateExample,
