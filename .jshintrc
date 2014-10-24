@@ -19,21 +19,5 @@
   "undef": true,
   "validthis": true,
   "predef": [
-    "$",
-    "jQuery",
-    "before",
-    "beforeEach",
-    "define",
-    "describe",
-    "describeComponent",
-    "describeMixin",
-    "expect",
-    "it",
-    "requirejs",
-    "setupComponent",
-	"MWL",
-	"Hogan",
-	"spyOn",
-	"spyOnEvent"
   ]
 }
