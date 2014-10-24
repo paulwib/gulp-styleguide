@@ -21,8 +21,12 @@ var path = require('path');
 var fileMetaProps = ['order', 'template'];
 fileMetaProps.forEach(function(prop) {
     dss.parser(prop, function(i, line, block){
-      return line;
+        return line;
     });
+});
+
+dss.parser('partial', function(i, line, block){
+    return line;
 });
 
 // Default options
@@ -164,6 +168,16 @@ function extract() {
             dss.blocks.forEach(function(block) {
                 if (block.hasOwnProperty('description')) {
                     block.description = markdown(String(block.description));
+                }
+                // A partial annotation creates a lambda on this block to use that template
+                // Add {{partial}} to a custom template to use it
+                if (block.hasOwnProperty('partial')) {
+                    var partialName = block.partial;
+                    block.partial = function() {
+                        return function() {
+                            return compiledTemplates[partialName].render(this);
+                        };
+                    };
                 }
                 if (block.hasOwnProperty('state') && block.hasOwnProperty('markup')) {
                     // Normalize state to an array (by default one state is an object)
