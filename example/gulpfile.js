@@ -23,10 +23,16 @@ gulp.task('sass', ['styleguide'], function () {
         .pipe(gulp.dest('dist/css'));
 });
 
+// Copy pseudo-sate JS into place
+gulp.task('js', function () {
+    return gulp.src(__dirname + '/../resources/js/pseudo-state.js')
+        .pipe(gulp.dest('dist/js'));
+});
+
 // Clean dist
 gulp.task('clean', function(cb) {
     return del('dist/**/*', cb);
 });
 
 // Default build task
-gulp.task('default', ['sass', 'styleguide']);
+gulp.task('default', ['js', 'sass', 'styleguide']);

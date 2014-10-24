@@ -1,12 +1,12 @@
 /**
  * @name Forms
- * @description Various from elements
  * @order 3
  */
 
 /**
  * @name Input fields
  * @state :focus - Focussed state
+ * @state :hover - Hover state
  * @state .error - Error state
  * @markup
  * <form><label>Label:</label> <input type="text" {{{state}}}></form>
@@ -18,9 +18,13 @@ input {
     font-family: inherit;
     font-size: inherit;
 
-    &:focus {
+    &:focus, &:hover {
       outline: none;
       border: 1px solid gray;
+    }
+
+    &:hover {
+        background: #eee;
     }
 }
 
