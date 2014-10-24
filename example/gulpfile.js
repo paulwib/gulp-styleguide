@@ -14,9 +14,9 @@ var options = {
 gulp.task('styleguide', styleguide.build(options));
 
 // Add server to preview style guide and livereload
-gulp.task('server', ['clean', 'default'], styleguide.server({ watchTasks: ['default'] }));
+gulp.task('server', ['default'], styleguide.server({ watchTasks: ['default'] }));
 
-// Add SASS task (remember styleguide does not convert assets, only extracts data for HTML)
+// Add SASS task (styleguide does not convert assets, only extracts data for HTML)
 gulp.task('sass', ['styleguide'], function () {
     return gulp.src('src/scss/index.scss')
         .pipe(sass())
