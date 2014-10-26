@@ -84,7 +84,7 @@ You can add any other variables you like to `site` by passing it with the option
 
 ## Custom DSS Parsers
 
-These parsers are added in addition to default name, description, states and markup:
+These parsers are in addition to default `@name`, `@description`, `@state` and `@markup`:
 
 * `@order {integer}` - Set the files sort order, lower numbers will come first. This allows you to order sections and files (when combining several on one HTML page). Taken from first DSS block in file, others will be ignored.
 * `@template {string}` - Specify the template file to use to render this file. Taken from first DSS block in file, others will be ignored.
