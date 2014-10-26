@@ -89,7 +89,10 @@ You can add any other variables you like to `site` by passing it with the option
 
 These parsers are added in addition to default name, description, states and markup:
 
-* `@order` - Set the files sort order, lower numbers will come first. This allows you to order sections and files (when combining several on one HTML page). Taken from the first DSS block in the file i.e. not for sorting within files.
+* `@order {integer}` - Set the files sort order, lower numbers will come first. This allows you to order sections and files (when combining several on one HTML page). Taken from first DSS block in file, others will be ignored.
+* `@template {string}` - Specify the template file to use to render this file. Taken from first DSS block in file, others will be ignored.
+* `@partial {string}` - Specify the partial template file to use to render this block. To use it in your template use `{{#partial}}{{/partial}}` (behind the scenes a lambda is created that will return the actual partial - this is how you can have variable partial names in Mustache).
+* `@variable {name} - {description}` - Document a variable. The `name` must match the name in the file without a `$` prefix. The value will be extracted from the file.
 
 ## What this doesn't do
 
