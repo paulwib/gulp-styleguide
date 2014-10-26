@@ -134,5 +134,20 @@ describe('gulp-styleguide', function() {
             stream.write(file);
             stream.end();
         });
+
+        it('should parse LESS @variable syntax', function(done) {
+            var stream = styleguide.pipes.extract({});
+            var file = getCssFile('test/index.css', '/**\n * @variable blue - Sky blue\n */\n@blue: #0000FF;\n');
+
+            stream.on('end', function() {
+                expect(file.dss.blocks[0].variable[0].name).to.equal('blue');
+                expect(file.dss.blocks[0].variable[0].value).to.equal('#0000FF');
+                expect(file.dss.blocks[0].variable[0].description).to.equal('Sky blue');
+                done();
+            });
+
+            stream.write(file);
+            stream.end();
+        });
     });
 });
