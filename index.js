@@ -55,7 +55,7 @@ function build(options) {
 
     gulp.task('styleguide.templates', function() {
         return gulp.src(options.src.templates)
-            .pipe(templateCompile(templates));
+            .pipe(compileTemplates(templates));
     });
     gulp.task('styleguide.build', ['styleguide.templates'], function() {
         return gulp.src(options.src.css)
@@ -77,7 +77,7 @@ function build(options) {
  * @param {object} templates - reference to store templates i
  * @return {stream}
  */
-function templateCompile(templates) {
+function compileTemplates(templates) {
 
     return es.map(function(file, cb) {
         if (file.isNull()) {
