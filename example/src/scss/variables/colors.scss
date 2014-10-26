@@ -3,8 +3,11 @@
  * @template pages/variables
  * @partial partials/color
  *
- * @state #FF9900 - orange
- * @state #0009FF - blue
+ * @variable orange - Like the fruit
+ * @variable blue Like the sky - although quite dark blue so not sky blue
+ * @variable green
  */
 $orange: #FF9900;
 $blue: #0009FF;
+$green: #00FF00;
+$black: #000000;

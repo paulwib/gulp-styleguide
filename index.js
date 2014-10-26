@@ -143,9 +143,31 @@ function extract() {
             return this.emit('error', new gutil.PluginError('gulp-styleguide',  'Streaming not supported'));
         }
         file.meta = {};
-        var basename = path.basename(file.relative, path.extname(file.path));
+        var basename = path.basename(file.relative, path.extname(file.path)),
+            fileString  = file.contents.toString();
 
-        dss.parse(file.contents.toString(), {}, function(dss) {
+        // Extract variables from the file
+        var rx = /^\$([a-zA-Z0-9_]+):([^\;]+)\;/gim, variables = {}, match;
+        while ((match = rx.exec(fileString)) !== null) {
+            variables[match[1].trim()] = match[2].trim();
+        }
+
+        // Add variable parser
+        dss.parser('variable', function(i, line, block) {
+            // Extract name and any delimiter with description
+            var tokens = line.split(/((\s|-)+)/, 2);
+            var name = tokens[0].trim();
+            if (variables.hasOwnProperty(name)) {
+                return {
+                    name: name,
+                    // Description is line with name and any delimiter replaced
+                    description: line.replace(tokens.join(''), ''),
+                    value: variables[name]
+                };
+            }
+        });
+
+        dss.parse(fileString, {}, function(dss) {
 
             if (dss.blocks.length) {
 
