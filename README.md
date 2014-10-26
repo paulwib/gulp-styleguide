@@ -89,10 +89,10 @@ These parsers are in addition to default `@name`, `@description`, `@state` and `
 * `@order {integer}` - Set the files sort order, lower numbers will come first. This allows you to order sections and files (when combining several on one HTML page). Taken from first DSS block in file, others will be ignored.
 * `@template {string}` - Specify the template file to use to render this file. Taken from first DSS block in file, others will be ignored.
 * `@partial {string}` - Specify the partial template file to use to render this block. To use it in your template use `{{#partial}}{{/partial}}` (behind the scenes a lambda is created that will return the actual partial - this is how you can have variable partial names in Mustache).
-* `@variable {name} - {description}` - Document a variable. The `name` must match the name in the file without a `$` prefix. The value will be extracted from the file.
+* `@variable {name} - {description}` - Document a variable. The `name` must match the name in the file without a `$` prefix. The value will be extracted from the file and assigned to `value`. It won't be computed so things like `$height: 5px*10` will have a literal value `5px*10`.
+
 
 ## What this doesn't do
-
 
 When making a useful re-usable gulp pipeline it's often difficult to draw a line under what it should or shouldn't do, but here's where the current line is drawn:
 
