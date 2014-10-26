@@ -232,16 +232,16 @@ function extract() {
 
             // Massaging block data
             dss.blocks.forEach(function(block) {
-                // Convert decsription from markdown to HTML
+                // Convert description from markdown to HTML
                 if (block.hasOwnProperty('description')) {
                     block.description = markdown(String(block.description));
                 }
-                // Normalize state to an array and add markup examples for each state
+                // Normalize state to an array
+                if (block.hasOwnProperty('state') && typeof block.state.slice !== 'function') {
+                    block.state = [block.state];
+                }
+                // Add state examples
                 if (block.hasOwnProperty('state') && block.hasOwnProperty('markup')) {
-                    if (typeof block.state.slice !== 'function') {
-                        block.state = [block.state];
-                    }
-
                     template = hogan.compile(block.markup.example);
                     block.markup.example = template.render({}).replace(/[a-z]+="\s*"/gi, '');
                     block.markup.escaped = block.markup.example.replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -305,5 +305,9 @@ function render(site, templates) {
 module.exports = {
     build: build,
     server: server,
-    defaultOptions: defaultOptions
+    defaultOptions: defaultOptions,
+	pipes: {
+        extract: extract,
+        render: render,
+	}
 };

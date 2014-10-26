@@ -4,6 +4,9 @@
   "description": "gulp pipeline to generate a styleguide from DSS",
   "main": "index.js",
   "license": "MIT",
+  "directories": {
+    "test": "test"
+  },
   "dependencies": {
     "dss": "^1.0.4",
     "ecstatic": "^0.5.4",
@@ -19,7 +22,33 @@
     "through": "^2.3.4"
   },
   "devDependencies": {
+    "chai": "^1.9.2",
     "del": "^0.1.3",
-    "gulp-sass": "^0.7.2"
-  }
+    "gulp-sass": "^0.7.2",
+    "mocha": "^2.0.1",
+    "should": "^4.1.0"
+  },
+  "engines": {
+    "node": ">=0.9"
+  },
+  "scripts": {
+    "test": "./node_modules/mocha/bin/mocha"
+  },
+  "keywords": [
+    "static",
+    "site",
+    "website",
+    "styleguide",
+    "pattern",
+    "library",
+    "css",
+    "sass",
+    "scss",
+    "less",
+    "dss",
+    "documented",
+    "stylesheets",
+    "design",
+    "documentation"
+  ]
 }
