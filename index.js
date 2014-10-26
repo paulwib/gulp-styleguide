@@ -243,7 +243,7 @@ function extract() {
                 // Add state examples
                 if (block.hasOwnProperty('state') && block.hasOwnProperty('markup')) {
                     template = hogan.compile(block.markup.example);
-                    block.markup.example = template.render({}).replace(/[a-z]+="\s*"/gi, '');
+                    block.markup.example = template.render({}).replace(/\s?[a-z]+="\s*"/gi, '');
                     block.markup.escaped = block.markup.example.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
                     block.state.forEach(function(state) {

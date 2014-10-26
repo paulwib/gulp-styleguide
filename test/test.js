@@ -73,5 +73,18 @@ describe('gulp-styleguide', function() {
             stream.write(file);
             stream.end();
         });
+
+        it('should strip empty attributes from block.markup', function(done) {
+            var stream = styleguide.pipes.extract({});
+            var file = getCssFile('test/index.css', '/**\n * @state .error\n * @markup\n * <span id="foo" class="{{{escaped}}}">foo</span>\n */');
+
+            stream.on('end', function() {
+                expect(file.dss.blocks[0].markup.example).to.equal('<span id="foo">foo</span>');
+                done();
+            });
+
+            stream.write(file);
+            stream.end();
+        });
     });
 });
