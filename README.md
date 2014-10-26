@@ -92,17 +92,16 @@ These parsers are in addition to default `@name`, `@description`, `@state` and `
 * `@variable {name} - {description}` - Document a variable. The `name` must match the name in the file without a `$` prefix. The value will be extracted from the file and assigned to `value`. It won't be computed so things like `$height: 5px*10` will have a literal value `5px*10`.
 
 
-## What this doesn't do
+## What This Doesn't Do
 
-When making a useful re-usable gulp pipeline it's often difficult to draw a line under what it should or shouldn't do, but here's where the current line is drawn:
+The general philosophy is not to do *any* processing of your assets. It will only extract the DSS from your CSS (or SASS or LESS) and produce some HTML output using your templates.
 
 * Does not compile your SASS/LESS
 * Does not do any image, icon or font processing
 * Does not do any minification/uglifying
 
-The general philosophy is not to do *any* processing of your assets. It will only extract the DSS from your CSS (or SASS or LESS) and produce some HTML output using your templates.
+These tasks can be added to your own gulpfile.
 
-You should add any additional steps for processing your assets to your own gulpfile.
 
 [SMACSS]:https://smacss.com/
 [Documented Style Sheets]:https://github.com/darcyclarke/DSS
