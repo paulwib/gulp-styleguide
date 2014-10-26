@@ -91,6 +91,17 @@ These parsers are in addition to default `@name`, `@description`, `@state` and `
 * `@partial {string}` - Specify the partial template file to use to render this block. To use it in your template use `{{#partial}}{{/partial}}` (behind the scenes a lambda is created that will return the actual partial - this is how you can have variable partial names in Mustache).
 * `@variable {name} - {description}` - Document a variable. The `name` must match the name in the file without a `$` prefix. The value will be extracted from the file and assigned to `value`. It won't be computed so things like `$height: 5px*10` will have a literal value `5px*10`.
 
+Also the `state` is post-parsed to add HTML examples for each state. This is rendered with the `state` (using Mustache) so you can add class names etc. For example:
+
+    /**
+     * @name Button
+     * @state .primary - Primary button
+     * @state .danger - Dangerous button
+     * @markup
+     * <button class="{{{escaped}}}">{{description}}</button>
+     */
+
+As well as `block.markup` each state will now have `markup.example` and `markup.escaped` added. Empty attributes will be stripped from the stateless example to avoid clutter.
 
 ## What This Doesn't Do
 
