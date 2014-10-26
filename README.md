@@ -1,6 +1,6 @@
 # Gulp Styleguide
 
-A gulp pipeline for building styleguide documentation from [Documented Style Sheets (DSS)][] comments in your CSS/SCSS/LESS.
+A gulp pipeline for building styleguide documentation from [Documented Style Sheets][] (DSS) comments in your CSS/SCSS/LESS.
 
 
 ## Usage
@@ -105,6 +105,6 @@ The general philosophy is not to do *any* processing of your assets. It will onl
 You should add any additional steps for processing your assets to your own gulpfile.
 
 [SMACSS]:https://smacss.com/
-[DSS]:https://github.com/darcyclarke/DSS
+[Documented Style Sheets]:https://github.com/darcyclarke/DSS
 [gulp-ssg]:https://github.com/paulwib/gulp-ssg
 
