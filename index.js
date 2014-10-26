@@ -16,6 +16,7 @@ var ssg = require('gulp-ssg');
 var hogan = require('hogan-updated');
 var through = require('through');
 var path = require('path');
+var crypto = require('crypto');
 
 // Default options
 var defaultOptions = {
@@ -130,21 +131,26 @@ function server(options) {
  * @param {object} file - The file to extract the variable values from
  * @return {function} A DSS parser
  */
-function getVariableDssParser(file) {
+function variableDssParser() {
 
-    var fileVariablesRx = /^[\$|@]([a-zA-Z0-9_]+):([^\;]+)\;/gim,
+    var fileVariables = {},
+        fileVariablesRx = /^[\$|@]([a-zA-Z0-9_]+):([^\;]+)\;/gim,
         lineSplitRx = /((\s|-)+)/,
         variables = {},
-        match;
+        match, hash, tokens, name;
 
-    while ((match = fileVariablesRx.exec(file.contents.toString())) !== null) {
-        variables[match[1].trim()] = match[2].trim();
-    }
+    return function(i, line, block, css) {
+        hash = crypto.createHash('md5').update(css).digest('hex');
+        if (!fileVariables[hash]) {
+            while ((match = fileVariablesRx.exec(css)) !== null) {
+                variables[match[1].trim()] = match[2].trim();
+            }
+            fileVariables[hash] = variables;
+        }
 
-    return function(i, line, block) {
         // Extract name and any delimiter with description
-        var tokens = line.split(lineSplitRx, 2);
-        var name = tokens[0].trim();
+        tokens = line.split(lineSplitRx, 2);
+        name = tokens[0].trim();
         if (variables.hasOwnProperty(name)) {
             return {
                 name: name,
@@ -183,10 +189,11 @@ function extract() {
 
     var template, stateExample, stateEscaped;
 
-    // Add static parsers
+    // Add parsers
     dss.parser('order', function(i, line) { return line; });
-    dss.parser('template', function(i, line) { return line; });
+    dss.parser('template', function(i, line, block) { return line; });
     dss.parser('partial', partialDssParser);
+    dss.parser('variable', variableDssParser());
 
     return es.map(function(file, cb) {
         if (file.isNull()) {
@@ -197,9 +204,6 @@ function extract() {
         }
         file.meta = {};
         var basename = path.basename(file.relative, path.extname(file.path));
-
-        // Add dynamic parsers
-        dss.parser('variable', getVariableDssParser(file));
 
         dss.parse(file.contents.toString(), {}, function(dss) {
 
