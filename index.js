@@ -187,7 +187,7 @@ function partialDssParser(i, line, block) {
  */
 function extract() {
 
-    var template, stateExample, stateEscaped;
+    var template, firstBlock;
 
     // Add parsers
     dss.parser('order', function(i, line) { return line; });
@@ -207,11 +207,10 @@ function extract() {
 
         dss.parse(file.contents.toString(), {}, function(dss) {
 
+            // Extract file level properties
             if (dss.blocks.length) {
-
-                var firstBlock = dss.blocks[0];
-
-                // Get section name from index
+                firstBlock = dss.blocks[0];
+                // Get section name from index file
                 if (basename === 'index') {
                     file.meta.sectionName = firstBlock.name;
                 }
@@ -220,7 +219,7 @@ function extract() {
                     file.meta.subsectionName = firstBlock.name;
                     delete dss.blocks[0].name;
                 }
-                // Properties to copy from first block that apply to whole file
+                // Extras
                 ['order', 'template'].forEach(function(prop) {
                     if (firstBlock[prop]) {
                         file.meta[prop] = firstBlock[prop];
@@ -228,28 +227,27 @@ function extract() {
                     }
                 });
             }
+
+            // Massaging block data
             dss.blocks.forEach(function(block) {
+                // Convert decsription from markdown to HTML
                 if (block.hasOwnProperty('description')) {
                     block.description = markdown(String(block.description));
                 }
+                // Normalize state to an array and add markup examples for each state
                 if (block.hasOwnProperty('state') && block.hasOwnProperty('markup')) {
-                    // Normalize state to an array (by default one state is an object)
                     if (typeof block.state.slice !== 'function') {
                         block.state = [block.state];
                     }
-                    template = hogan.compile(block.markup.example);
 
-                    // Render once with no state (stripping empty attributes)
+                    template = hogan.compile(block.markup.example);
                     block.markup.example = template.render({}).replace(/[a-z]+="\s*"/gi, '');
                     block.markup.escaped = block.markup.example.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-                    // Render template again for each state
                     block.state.forEach(function(state) {
-                        stateExample = template.render(state);
-                        stateEscaped = stateExample.replace(/</g, '&lt;').replace(/>/g, '&gt;');
                         state.markup = {
-                            example: stateExample,
-                            escaped: stateEscaped
+                            example: template.render(state),
+                            escaped: template.render(state).replace(/</g, '&lt;').replace(/>/g, '&gt;')
                         };
                     });
                 }
