@@ -17,18 +17,6 @@ var hogan = require('hogan-updated');
 var through = require('through');
 var path = require('path');
 
-// Set up some additional parsers for properties to be copied to the file
-var fileMetaProps = ['order', 'template'];
-fileMetaProps.forEach(function(prop) {
-    dss.parser(prop, function(i, line, block){
-        return line;
-    });
-});
-
-dss.parser('partial', function(i, line, block){
-    return line;
-});
-
 // Default options
 var defaultOptions = {
     server: {
@@ -53,18 +41,20 @@ var defaultOptions = {
     }
 };
 
-// Somewhere to store compiled templates
-var compiledTemplates = {};
-
 /**
  * Build combines 2 tasks: compile the templates and build the HTML
+ *
+ * @param {object} options
+ * @return {array} Tasks to run
  */
 function build(options) {
+
+    var templates = {};
     options = extend(true, defaultOptions.build, options);
 
     gulp.task('styleguide.templates', function() {
         return gulp.src(options.src.templates)
-            .pipe(templateCompile());
+            .pipe(templateCompile(templates));
     });
     gulp.task('styleguide.build', ['styleguide.templates'], function() {
         return gulp.src(options.src.css)
@@ -73,7 +63,7 @@ function build(options) {
                 sectionProperties: ['sectionName'],
                 sort: 'order'
             }))
-            .pipe(render(options.site, compiledTemplates))
+            .pipe(render(options.site, templates))
             .pipe(gulp.dest(options.dest.html));
     });
 
@@ -81,9 +71,12 @@ function build(options) {
 }
 
 /**
- * Pipe for compiling templates, stored in compiledTemplates, no files output
+ * Pipe for compiling templates, no files output
+ *
+ * @param {object} templates - reference to store templates i
+ * @return {stream}
  */
-function templateCompile() {
+function templateCompile(templates) {
 
     return es.map(function(file, cb) {
         if (file.isNull()) {
@@ -96,7 +89,7 @@ function templateCompile() {
             path.dirname(file.relative),
             path.basename(file.relative, path.extname(file.relative))
         );
-        compiledTemplates[templateName] = hogan.compile(file.contents.toString('utf8'));
+        templates[templateName] = hogan.compile(file.contents.toString('utf8'));
 
         cb(null, file);
     });
@@ -105,6 +98,9 @@ function templateCompile() {
 /**
  * Task to start server to view the guide, watch for changes and livereload
  * (livereload requires a browser plug-in)
+ *
+ * @param {object} options
+ * @return {function}
  */
 function server(options) {
 
@@ -129,11 +125,68 @@ function server(options) {
 }
 
 /**
- * Pipe for adding DSS to file
+ * Get parser for a file which will extract "@variable {name} - {description}"
+ *
+ * @param {object} file - The file to extract the variable values from
+ * @return {function} A DSS parser
+ */
+function getVariableDssParser(file) {
+
+    var fileVariablesRx = /^\$([a-zA-Z0-9_]+):([^\;]+)\;/gim,
+        lineSplitRx = /((\s|-)+)/,
+        variables = {},
+        match;
+
+    while ((match = fileVariablesRx.exec(file.contents.toString())) !== null) {
+        variables[match[1].trim()] = match[2].trim();
+    }
+
+    return function(i, line, block) {
+        // Extract name and any delimiter with description
+        var tokens = line.split(lineSplitRx, 2);
+        var name = tokens[0].trim();
+        if (variables.hasOwnProperty(name)) {
+            return {
+                name: name,
+                // Description is line with name and any delimiter replaced
+                description: line.replace(tokens.join(''), ''),
+                value: variables[name]
+            };
+        }
+    };
+}
+
+/**
+ * Parser to extract "@partial" and add a lambda to the block so you can use that
+ * partial in the template for the block with {{#partial}}{{/partial}} (because
+ * there is no such thing as variable partial names in Mustache)
+ *
+ * @param {number} i - Block number
+ * @param {string} line - Text after "@partial"
+ * @param {string} block - Entire DSS block
+ */
+function partialDssParser(i, line, block) {
+    var partialTag = '{{>' + line + '}}';
+    return function() {
+        return function() {
+            return partialTag;
+        };
+    };
+}
+
+/**
+ * Pipe for extracting DSS and adding to the file's properties
+ *
+ * @return {stream}
  */
 function extract() {
 
     var template, stateExample, stateEscaped;
+
+    // Add static parsers
+    dss.parser('order', function(i, line) { return line; });
+    dss.parser('template', function(i, line) { return line; });
+    dss.parser('partial', partialDssParser);
 
     return es.map(function(file, cb) {
         if (file.isNull()) {
@@ -143,63 +196,37 @@ function extract() {
             return this.emit('error', new gutil.PluginError('gulp-styleguide',  'Streaming not supported'));
         }
         file.meta = {};
-        var basename = path.basename(file.relative, path.extname(file.path)),
-            fileString  = file.contents.toString();
+        var basename = path.basename(file.relative, path.extname(file.path));
 
-        // Extract variables from the file
-        var rx = /^\$([a-zA-Z0-9_]+):([^\;]+)\;/gim, variables = {}, match;
-        while ((match = rx.exec(fileString)) !== null) {
-            variables[match[1].trim()] = match[2].trim();
-        }
+        // Add dynamic parsers
+        dss.parser('variable', getVariableDssParser(file));
 
-        // Add variable parser
-        dss.parser('variable', function(i, line, block) {
-            // Extract name and any delimiter with description
-            var tokens = line.split(/((\s|-)+)/, 2);
-            var name = tokens[0].trim();
-            if (variables.hasOwnProperty(name)) {
-                return {
-                    name: name,
-                    // Description is line with name and any delimiter replaced
-                    description: line.replace(tokens.join(''), ''),
-                    value: variables[name]
-                };
-            }
-        });
-
-        dss.parse(fileString, {}, function(dss) {
+        dss.parse(file.contents.toString(), {}, function(dss) {
 
             if (dss.blocks.length) {
 
+                var firstBlock = dss.blocks[0];
+
                 // Get section name from index
                 if (basename === 'index') {
-                    file.meta.sectionName = dss.blocks[0].name;
+                    file.meta.sectionName = firstBlock.name;
                 }
                 // Get sub-section name from first blocks name (and delete name to avoid repetition)
                 else {
-                    file.meta.subsectionName = dss.blocks[0].name;
+                    file.meta.subsectionName = firstBlock.name;
                     delete dss.blocks[0].name;
                 }
                 // Properties to copy from first block that apply to whole file
-                fileMetaProps.forEach(function(prop) {
-                    if (dss.blocks[0][prop]) {
-                        file.meta[prop] = dss.blocks[0][prop];
+                ['order', 'template'].forEach(function(prop) {
+                    if (firstBlock[prop]) {
+                        file.meta[prop] = firstBlock[prop];
+                        delete firstBlock[prop];
                     }
                 });
             }
             dss.blocks.forEach(function(block) {
                 if (block.hasOwnProperty('description')) {
                     block.description = markdown(String(block.description));
-                }
-                // @partial creates a lambda on this block to inject custom partial,
-                // use {{#partial}}{{/partial}} in your template
-                if (block.hasOwnProperty('partial')) {
-                    var partialTag = '{{>' + block.partial + '}}';
-                    block.partial = function() {
-                        return function() {
-                            return partialTag;
-                        };
-                    };
                 }
                 if (block.hasOwnProperty('state') && block.hasOwnProperty('markup')) {
                     // Normalize state to an array (by default one state is an object)
@@ -231,6 +258,10 @@ function extract() {
 
 /**
  * Pipe for rendering templates with data
+ *
+ * @param {object} site - The full content tree
+ * @param {object} templates - Compiled mustache templates
+ * @return {stream}
  */
 function render(site, templates) {
 
