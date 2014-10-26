@@ -84,7 +84,8 @@ function templateCompile(templates) {
             return;
         }
         if (file.isStream()) {
-            return this.emit('error', new gutil.PluginError('gulp-styleguide',  'Streaming not supported'));
+            cb(new gutil.PluginError('gulp-styleguide',  'Streaming not supported'));
+            return;
         }
         var templateName = path.join(
             path.dirname(file.relative),
@@ -200,7 +201,8 @@ function extract() {
             return;
         }
         if (file.isStream()) {
-            return this.emit('error', new gutil.PluginError('gulp-styleguide',  'Streaming not supported'));
+            cb(new gutil.PluginError('gulp-styleguide',  'Streaming not supported'));
+            return;
         }
         file.meta = {};
         var basename = path.basename(file.relative, path.extname(file.path));
@@ -280,7 +282,10 @@ function render(site, templates) {
         else {
             templateName = 'pages/default';
         }
-        try {
+        if (!templates.hasOwnProperty(templateName)) {
+            cb(new gutil.PluginError('gulp-styleguide', 'Template "' + templateName + '" missing'));
+        }
+        else {
             var html = templates[templateName].render({
                 meta: file.meta,
                 dss: file.dss,
@@ -289,12 +294,8 @@ function render(site, templates) {
             }, templates);
 
             file.contents = new Buffer(html);
-
-        } catch (e) {
-            throw new Error('Template "' + templateName + '" failed to render, invalid or missing');
+            cb(null, file);
         }
-
-        cb(null, file);
     });
 }
 
