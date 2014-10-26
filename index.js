@@ -236,10 +236,12 @@ function extract() {
                 if (block.hasOwnProperty('description')) {
                     block.description = markdown(String(block.description));
                 }
-                // Normalize state to an array
-                if (block.hasOwnProperty('state') && typeof block.state.slice !== 'function') {
-                    block.state = [block.state];
-                }
+                // Normalize @state and @variable to array
+                ['state', 'variable'].forEach(function(prop) {
+                    if (block.hasOwnProperty(prop) && typeof block[prop].slice !== 'function') {
+                        block[prop] = [block[prop]];
+                    }
+                });
                 // Add state examples
                 if (block.hasOwnProperty('state') && block.hasOwnProperty('markup')) {
                     template = hogan.compile(block.markup.example);

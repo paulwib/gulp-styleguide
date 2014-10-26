@@ -22,7 +22,7 @@ describe('gulp-styleguide', function() {
 
     describe('extract()', function() {
 
-        it('should extract @name', function(done) {
+        it('should parse @name', function(done) {
             var stream = styleguide.pipes.extract({});
             var file = getCssFile('test/index.css', '/**\n * @name Test\n */');
 
@@ -80,6 +80,54 @@ describe('gulp-styleguide', function() {
 
             stream.on('end', function() {
                 expect(file.dss.blocks[0].markup.example).to.equal('<span id="foo">foo</span>');
+                done();
+            });
+
+            stream.write(file);
+            stream.end();
+        });
+
+        it('should parse name, value and description from @variable', function(done) {
+            var stream = styleguide.pipes.extract({});
+            var file = getCssFile('test/index.css', '/**\n * @variable blue - Sky blue\n */\n$blue: #0000FF;\n');
+
+            stream.on('end', function() {
+                expect(file.dss.blocks[0].variable[0].name).to.equal('blue');
+                expect(file.dss.blocks[0].variable[0].value).to.equal('#0000FF');
+                expect(file.dss.blocks[0].variable[0].description).to.equal('Sky blue');
+                done();
+            });
+
+            stream.write(file);
+            stream.end();
+        });
+
+        it('should parse multiple @variable into an array', function(done) {
+            var stream = styleguide.pipes.extract({});
+            var file = getCssFile('test/index.css', '/**\n * @variable blue - Sky blue\n  * @variable red\n*/\n$blue: #0000FF;\n$red: #FF0000;\n');
+
+            stream.on('end', function() {
+                expect(file.dss.blocks[0].variable[0].name).to.equal('blue');
+                expect(file.dss.blocks[0].variable[0].value).to.equal('#0000FF');
+                expect(file.dss.blocks[0].variable[0].description).to.equal('Sky blue');
+                expect(file.dss.blocks[0].variable[1].name).to.equal('red');
+                expect(file.dss.blocks[0].variable[1].value).to.equal('#FF0000');
+                expect(file.dss.blocks[0].variable[1].description).to.equal('');
+                done();
+            });
+
+            stream.write(file);
+            stream.end();
+        });
+
+        it('should ignore @variable if not defined', function(done) {
+            var stream = styleguide.pipes.extract({});
+            var file = getCssFile('test/index.css', '/**\n * @variable blue - Sky blue\n  * @variable red\n*/\n$red: #FF0000;\n');
+
+            stream.on('end', function() {
+                expect(file.dss.blocks[0].variable.length).to.equal(1);
+                expect(file.dss.blocks[0].variable[0].name).to.equal('red');
+                expect(file.dss.blocks[0].variable[0].value).to.equal('#FF0000');
                 done();
             });
 
