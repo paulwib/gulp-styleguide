@@ -36,7 +36,7 @@ This is really only for convenience, you may find it more useful to write your o
 ### `styleguide.server(options)`
 
 * `port` - Port to run server on. Optional, defaults to 8745.
-* `documentRoot` - Where to find HTML files, which should be the same as where your HTML is output. Optional, defaults to `dist/html`.
+* `documentRoot` - Where to find HTML files, which should be the same as where your HTML is output. Optional, defaults to `dist/`.
 * `watchPaths` - Paths to watch for changes. Optional, defaults to default paths for CSS and templates i.e. `['src/**/*.{css,less,scss}', __dirname + 'templates/**/*.{mustache,html}']`
 * `watchTasks` - tasks to run when the files in `watchPaths` change. Optional, defaults to `['styleguide.templates', 'styleguide.build']` (the two "private" tasks behind `styleguide.build()`).
 
