@@ -132,7 +132,7 @@ function server(options) {
  */
 function getVariableDssParser(file) {
 
-    var fileVariablesRx = /^\$([a-zA-Z0-9_]+):([^\;]+)\;/gim,
+    var fileVariablesRx = /^[\$|@]([a-zA-Z0-9_]+):([^\;]+)\;/gim,
         lineSplitRx = /((\s|-)+)/,
         variables = {},
         match;
