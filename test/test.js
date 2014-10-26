@@ -35,12 +35,66 @@ describe('gulp-styleguide', function() {
             stream.end();
         });
 
+        it('should copy @name of index to file.meta.sectionName', function(done) {
+            var stream = styleguide.pipes.extract({});
+            var file = getCssFile('test/index.css', '/**\n * @name Test\n */');
+
+            stream.on('end', function() {
+                expect(file.meta.sectionName).to.equal('Test');
+                done();
+            });
+
+            stream.write(file);
+            stream.end();
+        });
+
+        it('should copy @name of non-index to file.meta.subsectionName', function(done) {
+            var stream = styleguide.pipes.extract({});
+            var index = getCssFile('test/index.css', '/**\n * @name Section Index\n */');
+            var file = getCssFile('test/buttons.css', '/**\n * @name Subsection\n */');
+
+            stream.on('end', function() {
+                expect(file.meta.subsectionName).to.equal('Subsection');
+                done();
+            });
+
+            stream.write(index);
+            stream.write(file);
+            stream.end();
+        });
+
         it('should convert @description to HTML', function(done) {
             var stream = styleguide.pipes.extract({});
             var file = getCssFile('test/index.css', '/**\n * @description Test\n */');
 
             stream.on('end', function() {
                 expect(file.dss.blocks[0].description.trim()).to.equal('<p>Test</p>');
+                done();
+            });
+
+            stream.write(file);
+            stream.end();
+        });
+
+        it('should parse @order and copy first to file.meta', function(done) {
+            var stream = styleguide.pipes.extract({});
+            var file = getCssFile('test/index.css', '/**\n * @order 1\n */');
+
+            stream.on('end', function() {
+                expect(file.meta.order).to.equal('1');
+                done();
+            });
+
+            stream.write(file);
+            stream.end();
+        });
+
+        it('should ignore @order in anything but the first block', function(done) {
+            var stream = styleguide.pipes.extract({});
+            var file = getCssFile('test/index.css', '/**\n * @name Test\n */\n\n/**\n * @order 1\n */');
+
+            stream.on('end', function() {
+                expect(file.meta.order).to.be.an('undefined');
                 done();
             });
 
@@ -143,6 +197,32 @@ describe('gulp-styleguide', function() {
                 expect(file.dss.blocks[0].variable[0].name).to.equal('blue');
                 expect(file.dss.blocks[0].variable[0].value).to.equal('#0000FF');
                 expect(file.dss.blocks[0].variable[0].description).to.equal('Sky blue');
+                done();
+            });
+
+            stream.write(file);
+            stream.end();
+        });
+
+        it('should parse @template and add it to file.meta', function(done) {
+            var stream = styleguide.pipes.extract({});
+            var file = getCssFile('test/index.css', '/**\n * @template pages/foo\n */');
+
+            stream.on('end', function() {
+                expect(file.meta.template).to.equal('pages/foo');
+                done();
+            });
+
+            stream.write(file);
+            stream.end();
+        });
+
+        it('should parse @partial into a lambda', function(done) {
+            var stream = styleguide.pipes.extract({});
+            var file = getCssFile('test/index.css', '/**\n * @partial partials/bar\n */');
+
+            stream.on('end', function() {
+                expect(file.dss.blocks[0].partial()()).to.equal('{{>partials/bar}}');
                 done();
             });
 
