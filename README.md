@@ -1,6 +1,6 @@
 # Gulp Styleguide
 
-A gulp pipeline for building styleguide documentation from [DSS][] comments in your CSS/SCSS/LESS.
+A gulp pipeline for building styleguide documentation from [Documented Style Sheets (DSS)][] comments in your CSS/SCSS/LESS.
 
 
 ## Usage
@@ -13,12 +13,9 @@ A gulp pipeline for building styleguide documentation from [DSS][] comments in y
         }
     };
 
-    gulp.task('styleguide', styleguide.build(options));
+    gulp.task('default', styleguide.build(options));
 
-Then run:
-
-    gulp styleguide
-
+Then run `gulp`.
 
 For development you can run a server which watches for changes and has livereload with:
 
@@ -31,7 +28,7 @@ This is really only for convenience, you may find it more useful to write your o
 
 ### `styleguide.build(options)`
 
-* `src.css` - Path to your CSS files. Optional, defaults to `'src/scss/**/*.{css,less,scss}'`.
+* `src.css` - Path to your CSS files. Optional, defaults to `'src/**/*.{css,less,scss}'`.
 * `src.templates` - Path to your Mustache templates. Optional, defaults to path to `templates/` in this library.
 * `dest.html` - Path to output HTML to. Optional, defaults to `dist/`.
 * `site` - An object to contain the outputted website. This can contain any variables you want to make available to your templates. It will have an `index` property appended which contains the site tree, more on that below. Optional, defaults to `{ site: { title: 'Styleguide' } }`.
@@ -40,7 +37,7 @@ This is really only for convenience, you may find it more useful to write your o
 
 * `port` - Port to run server on. Optional, defaults to 8745.
 * `documentRoot` - Where to find HTML files, which should be the same as where your HTML is output. Optional, defaults to `dist/html`.
-* `watchPaths` - Paths to watch for changes. Optional, defaults to default paths for CSS and templates i.e. `['src/scss/**/*.{css,less,scss}', __dirname + 'templates/**/*.{mustache,html}']`
+* `watchPaths` - Paths to watch for changes. Optional, defaults to default paths for CSS and templates i.e. `['src/**/*.{css,less,scss}', __dirname + 'templates/**/*.{mustache,html}']`
 * `watchTasks` - tasks to run when the files in `watchPaths` change. Optional, defaults to `['styleguide.templates', 'styleguide.build']` (the two "private" tasks behind `styleguide.build()`).
 
 
@@ -95,6 +92,7 @@ These parsers are added in addition to default name, description, states and mar
 * `@variable {name} - {description}` - Document a variable. The `name` must match the name in the file without a `$` prefix. The value will be extracted from the file.
 
 ## What this doesn't do
+
 
 When making a useful re-usable gulp pipeline it's often difficult to draw a line under what it should or shouldn't do, but here's where the current line is drawn:
 

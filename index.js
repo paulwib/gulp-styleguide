@@ -22,13 +22,13 @@ var defaultOptions = {
     server: {
         port: 8745,
         documentRoot: 'dist/',
-        watchPaths: ['src/scss/**/*.{css,less,scss}', __dirname + '/resources/**/*'],
+        watchPaths: ['src/**/*.{css,less,scss}', __dirname + '/resources/**/*'],
         reloadPaths: ['dist/**/*'],
         watchTasks: ['styleguide.templates', 'styleguide.build']
     },
     build: {
         src: {
-            css: 'src/scss/**/*.{css,less,scss}',
+            css: 'src/**/*.{css,less,scss}',
             templates: __dirname + '/resources/templates/**/*.{mustache,html}'
         },
         dest: {

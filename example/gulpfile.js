@@ -11,6 +11,7 @@ var options = {
         title: 'Test Styleguide'
     },
 	src: {
+        css: 'src/scss/**/*.{css,less,scss}',
         // Add custom templates
 	    templates: ['resources/templates/**/*.mustache', styleguide.defaultOptions.build.src.templates]
 	}
