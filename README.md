@@ -1,4 +1,5 @@
-# Gulp Styleguide
+Gulp Styleguide  [![NPM version][npm-image]][npm-url] [![Dependency Status][depstat-image]][depstat-url] [![Build Status][travis-image]][travis-url]
+===
 
 A gulp pipeline for building styleguide documentation from [Documented Style Sheets][] (DSS) comments in your CSS/SCSS/LESS.
 
@@ -125,3 +126,11 @@ These tasks can be added to your own gulpfile.
 [Documented Style Sheets]:https://github.com/darcyclarke/DSS
 [gulp-ssg]:https://github.com/paulwib/gulp-ssg
 
+[npm-url]: https://npmjs.org/package/gulp-styleguide
+[npm-image]: http://img.shields.io/npm/v/gulp-styleguide.svg?style=flat
+
+[depstat-url]: https://david-dm.org/paulwib/gulp-styleguide
+[depstat-image]: https://david-dm.org/paulwib/gulp-styleguide.svg?style=flat
+
+[travis-image]: http://img.shields.io/travis/paulwib/gulp-styleguide/master.svg?style=flat
+[travis-url]: https://travis-ci.org/paulwib/gulp-styleguide
