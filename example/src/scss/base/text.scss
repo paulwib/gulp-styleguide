@@ -19,3 +19,15 @@ p:first-child {
 p.large {
     font-size: 20px;
 }
+
+/**
+ * @name Quotes
+ * @state en - English
+ * @state fr - French
+ * @state de - German
+ * @markup
+ * <p lang="{{{escaped}}}"><q>This {{description}} quote has a <q>nested</q> quote.</q></p>
+ */
+:lang(en) > q { quotes: '\201C' '\201D' '\2018' '\2019'; }
+:lang(fr) > q { quotes: '« ' ' »'; }
+:lang(de) > q { quotes: '»' '«' '\2039' '\203A'; }
