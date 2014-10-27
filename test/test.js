@@ -1,6 +1,6 @@
 'use strict';
 /* globals describe, it */
-var styleguide = require('../');
+var extract = require('../lib/extract');
 var expect = require('chai').expect;
 var should = require('should');
 var fs = require('fs');
@@ -23,7 +23,7 @@ describe('gulp-styleguide', function() {
     describe('extract()', function() {
 
         it('should parse @name', function(done) {
-            var stream = styleguide.pipes.extract({});
+            var stream = extract({});
             var file = getCssFile('test/index.css', '/**\n * @name Test\n */');
 
             stream.on('end', function() {
@@ -36,7 +36,7 @@ describe('gulp-styleguide', function() {
         });
 
         it('should copy @name of index to file.meta.sectionName', function(done) {
-            var stream = styleguide.pipes.extract({});
+            var stream = extract({});
             var file = getCssFile('test/index.css', '/**\n * @name Test\n */');
 
             stream.on('end', function() {
@@ -49,7 +49,7 @@ describe('gulp-styleguide', function() {
         });
 
         it('should copy @name of non-index to file.meta.subsectionName', function(done) {
-            var stream = styleguide.pipes.extract({});
+            var stream = extract({});
             var index = getCssFile('test/index.css', '/**\n * @name Section Index\n */');
             var file = getCssFile('test/buttons.css', '/**\n * @name Subsection\n */');
 
@@ -64,7 +64,7 @@ describe('gulp-styleguide', function() {
         });
 
         it('should convert @description to HTML', function(done) {
-            var stream = styleguide.pipes.extract({});
+            var stream = extract({});
             var file = getCssFile('test/index.css', '/**\n * @description Test\n */');
 
             stream.on('end', function() {
@@ -77,7 +77,7 @@ describe('gulp-styleguide', function() {
         });
 
         it('should parse @order and copy first to file.meta', function(done) {
-            var stream = styleguide.pipes.extract({});
+            var stream = extract({});
             var file = getCssFile('test/index.css', '/**\n * @order 1\n */');
 
             stream.on('end', function() {
@@ -90,7 +90,7 @@ describe('gulp-styleguide', function() {
         });
 
         it('should ignore @order in anything but the first block', function(done) {
-            var stream = styleguide.pipes.extract({});
+            var stream = extract({});
             var file = getCssFile('test/index.css', '/**\n * @name Test\n */\n\n/**\n * @order 1\n */');
 
             stream.on('end', function() {
@@ -103,7 +103,7 @@ describe('gulp-styleguide', function() {
         });
 
         it('should make @state an array, even if only one', function(done) {
-            var stream = styleguide.pipes.extract({});
+            var stream = extract({});
             var file = getCssFile('test/index.css', '/**\n * @state .error\n */');
 
             stream.on('end', function() {
@@ -116,7 +116,7 @@ describe('gulp-styleguide', function() {
         });
 
         it('should add @state HTML examples, expanding variables', function(done) {
-            var stream = styleguide.pipes.extract({});
+            var stream = extract({});
             var file = getCssFile('test/index.css', '/**\n * @state .error\n * @markup\n * <span class="{{{escaped}}}">foo</span>\n */');
 
             stream.on('end', function() {
@@ -129,7 +129,7 @@ describe('gulp-styleguide', function() {
         });
 
         it('should strip empty attributes from block.markup', function(done) {
-            var stream = styleguide.pipes.extract({});
+            var stream = extract({});
             var file = getCssFile('test/index.css', '/**\n * @state .error\n * @markup\n * <span id="foo" class="{{{escaped}}}">foo</span>\n */');
 
             stream.on('end', function() {
@@ -142,7 +142,7 @@ describe('gulp-styleguide', function() {
         });
 
         it('should parse name, value and description from @variable', function(done) {
-            var stream = styleguide.pipes.extract({});
+            var stream = extract({});
             var file = getCssFile('test/index.css', '/**\n * @variable blue - Sky blue\n */\n$blue: #0000FF;\n');
 
             stream.on('end', function() {
@@ -157,7 +157,7 @@ describe('gulp-styleguide', function() {
         });
 
         it('should parse multiple @variable into an array', function(done) {
-            var stream = styleguide.pipes.extract({});
+            var stream = extract({});
             var file = getCssFile('test/index.css', '/**\n * @variable blue - Sky blue\n  * @variable red\n*/\n$blue: #0000FF;\n$red: #FF0000;\n');
 
             stream.on('end', function() {
@@ -175,7 +175,7 @@ describe('gulp-styleguide', function() {
         });
 
         it('should ignore @variable if not defined', function(done) {
-            var stream = styleguide.pipes.extract({});
+            var stream = extract({});
             var file = getCssFile('test/index.css', '/**\n * @variable blue - Sky blue\n  * @variable red\n*/\n$red: #FF0000;\n');
 
             stream.on('end', function() {
@@ -190,7 +190,7 @@ describe('gulp-styleguide', function() {
         });
 
         it('should parse LESS @variable syntax', function(done) {
-            var stream = styleguide.pipes.extract({});
+            var stream = extract({});
             var file = getCssFile('test/index.css', '/**\n * @variable blue - Sky blue\n */\n@blue: #0000FF;\n');
 
             stream.on('end', function() {
@@ -205,7 +205,7 @@ describe('gulp-styleguide', function() {
         });
 
         it('should parse @template and add it to file.meta', function(done) {
-            var stream = styleguide.pipes.extract({});
+            var stream = extract({});
             var file = getCssFile('test/index.css', '/**\n * @template pages/foo\n */');
 
             stream.on('end', function() {
@@ -218,7 +218,7 @@ describe('gulp-styleguide', function() {
         });
 
         it('should parse @partial into a lambda', function(done) {
-            var stream = styleguide.pipes.extract({});
+            var stream = extract({});
             var file = getCssFile('test/index.css', '/**\n * @partial partials/bar\n */');
 
             stream.on('end', function() {
