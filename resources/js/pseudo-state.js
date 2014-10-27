@@ -8,7 +8,7 @@
 
     var stylesheet, rule, selector, newSelector,
         stylesheets = context.document.styleSheets,
-        pseudoRegex = /\:(hover|focus|disabled|active|visited)/gi,
+        pseudoRegex = /\:(hover|focus|disabled|active|visited|first-child)/gi,
         selectorReplace = function(match) {
             return '.pseudo-class-' + match.substr(1);
         };
