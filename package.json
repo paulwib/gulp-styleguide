@@ -4,8 +4,14 @@
   "description": "gulp pipeline to generate a styleguide from DSS",
   "main": "index.js",
   "license": "MIT",
+  "homepage": "https://github.com/paulwib/gulp-styleguide",
+  "bugs": "https://github.com/paulwib/gulp-styleguide/issues",
   "directories": {
     "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/paulwib/gulp-styleguide.git"
   },
   "dependencies": {
     "dss": "^1.0.4",
