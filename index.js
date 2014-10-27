@@ -15,7 +15,7 @@ var compileTemplates = require('./lib/templates');
 var defaultOptions = {
     src: {
         css: 'src/**/*.{css,less,scss}',
-        templates: __dirname + '/resources/templates/**/*.{mustache,html}'
+        templates: []
     },
     dest: {
         html: 'dist/',
@@ -34,6 +34,11 @@ var compiledTemplates = {};
 function templates(options) {
 
     options = extend(true, defaultOptions, options);
+
+    // Add default templates
+    if (typeof options.src.templates.unshift === 'function') {
+        options.src.templates.push(__dirname + '/resources/templates/**/*.{mustache,html}');
+    }
 
     return function() {
         return gulp.src(options.src.templates)

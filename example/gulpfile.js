@@ -16,7 +16,7 @@ var options = {
     },
     src: {
         css: 'src/scss/**/*.{css,less,scss}',
-	    templates: ['resources/templates/**/*.mustache', styleguide.defaultOptions.src.templates]
+	    templates: ['resources/templates/**/*.mustache']
     }
 };
 
