@@ -16,7 +16,9 @@ var options = {
 	    templates: ['resources/templates/**/*.mustache', styleguide.defaultOptions.build.src.templates]
 	}
 };
-gulp.task('styleguide', styleguide.build(options));
+
+gulp.task('templates', styleguide.templates(options));
+gulp.task('styleguide', ['templates'], styleguide.build(options));
 
 // Add server to preview style guide and livereload
 gulp.task('server', ['default'], styleguide.server({ watchTasks: ['default'] }));

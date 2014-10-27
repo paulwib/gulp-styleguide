@@ -12,7 +12,7 @@ var ssg = require('gulp-ssg');
 var gutil = require('gulp-util');
 var extract = require('./lib/extract');
 var render = require('./lib/render');
-var templates = require('./lib/templates');
+var compileTemplates = require('./lib/templates');
 
 // Default options
 var defaultOptions = {
@@ -34,37 +34,42 @@ var defaultOptions = {
         },
         site: {
             title: 'Styleguide'
-        }
+        },
+        compiledTemplates: {}
     }
 };
 
 /**
- * Build combines 2 tasks: compile the templates and build the HTML
- *
- * @param {object} options
- * @return {array} Tasks to run
+ * Task to compile Mustache templates with hogan.js
+ */
+function templates(options) {
+
+    options = extend(true, defaultOptions.build, options);
+
+    return function() {
+        return gulp.src(options.src.templates)
+            .pipe(compileTemplates(options.compiledTemplates));
+    };
+}
+
+/**
+ * Task to build the styleguide, depends on templates
  */
 function build(options) {
 
-    var templateStore = {};
     options = extend(true, defaultOptions.build, options);
 
-    gulp.task('styleguide.templates', function() {
-        return gulp.src(options.src.templates)
-            .pipe(templates(templateStore));
-    });
-    gulp.task('styleguide.build', ['styleguide.templates'], function() {
+    return function() {
+
         return gulp.src(options.src.css)
             .pipe(extract())
             .pipe(ssg(options.site, {
                 sectionProperties: ['sectionName'],
                 sort: 'order'
             }))
-            .pipe(render(options.site, templateStore))
+            .pipe(render(options.site, options.compiledTemplates))
             .pipe(gulp.dest(options.dest.html));
-    });
-
-    return ['styleguide.templates', 'styleguide.build'];
+    };
 }
 
 /**
@@ -100,6 +105,7 @@ function server(options) {
  * Export the available tasks
  */
 module.exports = {
+    templates: templates,
     build: build,
     server: server,
     defaultOptions: defaultOptions
