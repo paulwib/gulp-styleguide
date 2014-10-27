@@ -3,7 +3,6 @@ Gulp Styleguide  [![NPM version][npm-image]][npm-url] [![Dependency Status][deps
 
 A gulp pipeline for building styleguide documentation from [Documented Style Sheets][] (DSS) comments in your CSS/SCSS/LESS.
 
-
 ## Usage
 
 Put your CSS into a directory structure with an index for each directory e.g.
@@ -31,16 +30,10 @@ Then in you gulpfile:
         }
     };
 
-    gulp.task('default', styleguide.build(options));
+    gulp.task('templates', styleguide.templates(options));
+    gulp.task('build', ['templates'], styleguide.build(options));
 
 Then run `gulp` and a bunch of HTML files should appear in the `dist/` directory.
-
-For development you can run a server which watches for changes and has livereload with:
-
-    gulp.task('server', styleguide.server());
-
-This is really only for convenience, you may find it more useful to write your own server task.
-
 
 ## File Structure
 
@@ -52,23 +45,16 @@ By convention the `index` should only have minimal CSS and import the rest of th
 
 The first comment block's `@name` in non-index files will be used for the subsection name.
 
+## Examples
+
+There is a full gulpfile example in `example/`. This includes SASS compiling and running a preview server with livereload.
 
 ## Options
-
-### `styleguide.build(options)`
 
 * `src.css` - Path to your CSS files. Optional, defaults to `'src/**/*.{css,less,scss}'`.
 * `src.templates` - Path to your Mustache templates. Optional, defaults to path to `templates/` in this library.
 * `dest.html` - Path to output HTML to. Optional, defaults to `dist/`.
 * `site` - An object to contain the outputted website. This can contain any variables you want to make available to your templates. It will have an `index` property appended which contains the site tree, more on that below. Optional, defaults to `{ site: { title: 'Styleguide' } }`.
-
-### `styleguide.server(options)`
-
-* `port` - Port to run server on. Optional, defaults to 8745.
-* `documentRoot` - Where to find HTML files, which should be the same as where your HTML is output. Optional, defaults to `dist/`.
-* `watchPaths` - Paths to watch for changes. Optional, defaults to default paths for CSS and templates i.e. `['src/**/*.{css,less,scss}', __dirname + 'templates/**/*.{mustache,html}']`
-* `watchTasks` - tasks to run when the files in `watchPaths` change. Optional, defaults to `['styleguide.templates', 'styleguide.build']` (the two "private" tasks behind `styleguide.build()`).
-
 
 
 ## Templating
