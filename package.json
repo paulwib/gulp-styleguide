@@ -1,6 +1,6 @@
 {
   "name": "gulp-styleguide",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "gulp pipeline to generate a styleguide from DSS",
   "main": "index.js",
   "license": "MIT",
