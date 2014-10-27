@@ -5,6 +5,23 @@ A gulp pipeline for building styleguide documentation from [Documented Style She
 
 ## Usage
 
+Put your CSS into a directory structure with an index for each directory e.g.
+
+    src/
+        scss/
+            index.scss
+            base/
+                index.scss
+                headings.scss
+            layout/
+                index.scss
+                grid.scss
+            modules/
+                index.scss
+                toolbar.scss
+
+Then in you gulpfile:
+
     var gulp = require('gulp');
     var styleguide = require('gulp-styleguide');
     var options = {
@@ -15,13 +32,24 @@ A gulp pipeline for building styleguide documentation from [Documented Style She
 
     gulp.task('default', styleguide.build(options));
 
-Then run `gulp`.
+Then run `gulp` and a bunch of HTML files should appear in the `dist/` directory.
 
 For development you can run a server which watches for changes and has livereload with:
 
     gulp.task('server', styleguide.server());
 
 This is really only for convenience, you may find it more useful to write your own server task.
+
+
+## File Structure
+
+The structure of the HTML reflects the structure of your CSS. For that reason it's nice to separate your CSS into directories that reflect the purpose of the CSS.
+
+The `index` is required to build a section index. The first comment block's `@name` will be used for the section name. It's a good place to put any introductory text for the section in the `@description` annotation.
+
+By convention the `index` should only have minimal CSS and import the rest of the files for that section, but this is not required.
+
+The first comment block's `@name` in non-index files will be used for the subsection name.
 
 
 ## Options
@@ -41,32 +69,6 @@ This is really only for convenience, you may find it more useful to write your o
 * `watchTasks` - tasks to run when the files in `watchPaths` change. Optional, defaults to `['styleguide.templates', 'styleguide.build']` (the two "private" tasks behind `styleguide.build()`).
 
 
-## File Structure
-
-The structure of the HTML reflects the structure of your CSS. For that reason it's nice to separate your CSS into directories that reflect the purpose of the CSS. Here's an example using SCSS and a [SMACSS][] structure:
-
-    scss/
-        index.scss
-        base/
-            index.scss
-            headings.scss
-            text.scss
-        layout/
-            index.scss
-            grid.scss
-        modules/
-            index.scss
-            accordion.scss
-            toolbar.scss
-        state/
-            index.scss
-            mobile.scss
-            errors.scss
-
-The `index.scss` is required to build a section index. The first comment block's `@name` will be used for the section name. It's a good place to put any introductory text for the section in the `@description` annotation.
-
-By convention the `index.scss` should only have minimal CSS and import the rest of the files for that section, but this is not required.
-
 
 ## Templating
 
@@ -77,8 +79,8 @@ You are free to override with your own templates, add layout and partials etc. p
 There are a number of preset variables available:
 
 * `site.index` - This contains a full content-tree of the entire styleguide. This is built with [gulp-ssg][] - see the documentation for more info, but basically it allows you to do things like make navigation, render sub-pages in pages etc.
-* `meta` - Each file has a `meta` property that contains things like the `url`. Again see the [gulp-ssg][] documentation for full details and information on how you can add your own properties.
-* `dss` - Each file has a `dss` property, see the [DSS][] documentation for more info about what that contains.
+* `meta` - Each file has a `meta` property that contains things like the `url`. Again see the [gulp-ssg][] documentation for full details and information on how you can add your own properties. In addition to the standard properties you'll get `meta.sectionName` and `meta.subsectioName`.
+* `dss` - Each file has a `dss` property, see the [DSS][] documentation for more info about what that contains. Some additional DSS annotations are parsed as described below.
 
 You can add any other variables you like to `site` by passing it with the options, just be careful not to override.
 
