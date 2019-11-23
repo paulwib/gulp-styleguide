@@ -5,16 +5,16 @@ var expect = require('chai').expect;
 var should = require('should');
 var fs = require('fs');
 var path = require('path');
-var File = require('gulp-util').File;
+var Vinyl = require('vinyl');
 var Buffer = require('buffer').Buffer;
 
 
 function getCssFile(path, content) {
-    return new File({
+    return new Vinyl({
         cwd: '',
         base: 'test/',
         path: path,
-        contents: new Buffer(content)
+        contents: new Buffer.from(content)
     });
 }
 

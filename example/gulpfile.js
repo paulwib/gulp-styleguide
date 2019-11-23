@@ -6,7 +6,7 @@ var styleguide = require('../');
 var del = require('del');
 var http = require('http');
 var livereload = require('gulp-livereload');
-var gutil = require('gulp-util');
+var log = require('fancy-log');
 var ecstatic = require('ecstatic');
 
 // Add styleguide task
@@ -53,7 +53,7 @@ gulp.task('server', ['default'], function() {
     http.createServer(
         ecstatic({ root: 'dist/' })
     ).listen(port);
-    gutil.log('Preview website running on http://localhost:' + gutil.colors.magenta(port));
+    log.info('Preview website running on http://localhost:' + port);
 
     if(process.platform !== 'win32') {
         var server = livereload();

@@ -6,7 +6,6 @@
 var extend = require('extend');
 var gulp = require('gulp');
 var ssg = require('gulp-ssg');
-var gutil = require('gulp-util');
 var extract = require('./lib/extract');
 var render = require('./lib/render');
 var compileTemplates = require('./lib/templates');
