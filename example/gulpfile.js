@@ -1,13 +1,14 @@
 'use strict';
 
+var url = require('url');
 var gulp = require('gulp');
 var sass = require('gulp-sass');
-var styleguide = require('../');
 var del = require('del');
 var http = require('http');
+var send = require('send');
 var livereload = require('gulp-livereload');
 var log = require('fancy-log');
-var ecstatic = require('ecstatic');
+var styleguide = require('../');
 
 // Add styleguide task
 var options = {
@@ -16,7 +17,7 @@ var options = {
     },
     src: {
         css: 'src/scss/**/*.{css,less,scss}',
-	    templates: ['resources/templates/**/*.mustache']
+        templates: ['resources/templates/**/*.mustache']
     }
 };
 
@@ -50,9 +51,10 @@ gulp.task('server', ['default'], function() {
 
     gulp.watch(['src/**/*', 'resources/**/*', __dirname + '/../resources/**/*'], ['default']);
 
-    http.createServer(
-        ecstatic({ root: 'dist/' })
-    ).listen(port);
+    http.createServer(function (req, res) {
+        send(req, url.parse(req.url).pathname, { root: './dist'  }).pipe(res);
+    }).listen(port);
+
     log.info('Preview website running on http://localhost:' + port);
 
     if(process.platform !== 'win32') {
