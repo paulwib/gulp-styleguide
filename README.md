@@ -47,7 +47,7 @@ The first comment block's `@name` in non-index files will be used for the subsec
 
 ## Examples
 
-There is a full gulpfile example in `example/`. This includes SASS compiling and running a preview server with livereload.
+There is a full gulpfile example in `example/`. This includes SASS compiling and running a preview server.
 
 ## Options
 

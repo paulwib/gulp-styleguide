@@ -1,13 +1,13 @@
 'use strict';
 
+var url = require('url');
 var gulp = require('gulp');
 var sass = require('gulp-sass');
-var styleguide = require('../');
 var del = require('del');
 var http = require('http');
-var livereload = require('gulp-livereload');
-var gutil = require('gulp-util');
-var ecstatic = require('ecstatic');
+var send = require('send');
+var log = require('fancy-log');
+var styleguide = require('../');
 
 // Add styleguide task
 var options = {
@@ -16,7 +16,7 @@ var options = {
     },
     src: {
         css: 'src/scss/**/*.{css,less,scss}',
-	    templates: ['resources/templates/**/*.mustache']
+        templates: ['resources/templates/**/*.mustache']
     }
 };
 
@@ -43,24 +43,17 @@ gulp.task('clean', function(cb) {
     return del('dist/**/*', cb);
 });
 
-// Add server task, with live reload
+// Add server task
 gulp.task('server', ['default'], function() {
-
     var port = 8745;
 
     gulp.watch(['src/**/*', 'resources/**/*', __dirname + '/../resources/**/*'], ['default']);
 
-    http.createServer(
-        ecstatic({ root: 'dist/' })
-    ).listen(port);
-    gutil.log('Preview website running on http://localhost:' + gutil.colors.magenta(port));
+    http.createServer(function (req, res) {
+        send(req, url.parse(req.url).pathname, { root: './dist'  }).pipe(res);
+    }).listen(port);
 
-    if(process.platform !== 'win32') {
-        var server = livereload();
-        gulp.watch('dist/**/*').on('change', function(file) {
-            server.changed(file.path);
-        });
-    }
+    log.info('Preview website running on http://localhost:' + port);
 });
 
 // Add default task
