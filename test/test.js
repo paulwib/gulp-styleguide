@@ -1,12 +1,9 @@
-'use strict';
-/* globals describe, it */
-var extract = require('../lib/extract');
-var expect = require('chai').expect;
-var should = require('should');
 var fs = require('fs');
 var path = require('path');
+var test = require('tape');
 var Vinyl = require('vinyl');
 var Buffer = require('buffer').Buffer;
+var extract = require('../lib/extract');
 
 
 function getCssFile(path, content) {
@@ -18,216 +15,210 @@ function getCssFile(path, content) {
     });
 }
 
-describe('gulp-styleguide', function() {
+test('should parse @name', function(t) {
+    t.plan(1);
+    var stream = extract({});
+    var file = getCssFile('test/index.css', '/**\n * @name Test\n */');
 
-    describe('extract()', function() {
-
-        it('should parse @name', function(done) {
-            var stream = extract({});
-            var file = getCssFile('test/index.css', '/**\n * @name Test\n */');
-
-            stream.on('end', function() {
-                expect(file.dss.blocks[0].name).to.equal('Test');
-                done();
-            });
-
-            stream.write(file);
-            stream.end();
-        });
-
-        it('should copy @name of index to file.meta.sectionName', function(done) {
-            var stream = extract({});
-            var file = getCssFile('test/index.css', '/**\n * @name Test\n */');
-
-            stream.on('end', function() {
-                expect(file.meta.sectionName).to.equal('Test');
-                done();
-            });
-
-            stream.write(file);
-            stream.end();
-        });
-
-        it('should copy @name of non-index to file.meta.subsectionName', function(done) {
-            var stream = extract({});
-            var index = getCssFile('test/index.css', '/**\n * @name Section Index\n */');
-            var file = getCssFile('test/buttons.css', '/**\n * @name Subsection\n */');
-
-            stream.on('end', function() {
-                expect(file.meta.subsectionName).to.equal('Subsection');
-                done();
-            });
-
-            stream.write(index);
-            stream.write(file);
-            stream.end();
-        });
-
-        it('should convert @description to HTML', function(done) {
-            var stream = extract({});
-            var file = getCssFile('test/index.css', '/**\n * @description Test\n */');
-
-            stream.on('end', function() {
-                expect(file.dss.blocks[0].description.trim()).to.equal('<p>Test</p>');
-                done();
-            });
-
-            stream.write(file);
-            stream.end();
-        });
-
-        it('should parse @order and copy first to file.meta', function(done) {
-            var stream = extract({});
-            var file = getCssFile('test/index.css', '/**\n * @order 1\n */');
-
-            stream.on('end', function() {
-                expect(file.meta.order).to.equal('1');
-                done();
-            });
-
-            stream.write(file);
-            stream.end();
-        });
-
-        it('should ignore @order in anything but the first block', function(done) {
-            var stream = extract({});
-            var file = getCssFile('test/index.css', '/**\n * @name Test\n */\n\n/**\n * @order 1\n */');
-
-            stream.on('end', function() {
-                expect(file.meta.order).to.be.an('undefined');
-                done();
-            });
-
-            stream.write(file);
-            stream.end();
-        });
-
-        it('should make @state an array, even if only one', function(done) {
-            var stream = extract({});
-            var file = getCssFile('test/index.css', '/**\n * @state .error\n */');
-
-            stream.on('end', function() {
-                expect(file.dss.blocks[0].state).to.be.an.instanceof(Array);
-                done();
-            });
-
-            stream.write(file);
-            stream.end();
-        });
-
-        it('should add @state HTML examples, expanding variables', function(done) {
-            var stream = extract({});
-            var file = getCssFile('test/index.css', '/**\n * @state .error\n * @markup\n * <span class="{{{escaped}}}">foo</span>\n */');
-
-            stream.on('end', function() {
-                expect(file.dss.blocks[0].state[0].markup.example).to.equal('<span class="error">foo</span>');
-                done();
-            });
-
-            stream.write(file);
-            stream.end();
-        });
-
-        it('should strip empty attributes from block.markup', function(done) {
-            var stream = extract({});
-            var file = getCssFile('test/index.css', '/**\n * @state .error\n * @markup\n * <span id="foo" class="{{{escaped}}}">foo</span>\n */');
-
-            stream.on('end', function() {
-                expect(file.dss.blocks[0].markup.example).to.equal('<span id="foo">foo</span>');
-                done();
-            });
-
-            stream.write(file);
-            stream.end();
-        });
-
-        it('should parse name, value and description from @variable', function(done) {
-            var stream = extract({});
-            var file = getCssFile('test/index.css', '/**\n * @variable blue - Sky blue\n */\n$blue: #0000FF;\n');
-
-            stream.on('end', function() {
-                expect(file.dss.blocks[0].variable[0].name).to.equal('blue');
-                expect(file.dss.blocks[0].variable[0].value).to.equal('#0000FF');
-                expect(file.dss.blocks[0].variable[0].description).to.equal('Sky blue');
-                done();
-            });
-
-            stream.write(file);
-            stream.end();
-        });
-
-        it('should parse multiple @variable into an array', function(done) {
-            var stream = extract({});
-            var file = getCssFile('test/index.css', '/**\n * @variable blue - Sky blue\n  * @variable red\n*/\n$blue: #0000FF;\n$red: #FF0000;\n');
-
-            stream.on('end', function() {
-                expect(file.dss.blocks[0].variable[0].name).to.equal('blue');
-                expect(file.dss.blocks[0].variable[0].value).to.equal('#0000FF');
-                expect(file.dss.blocks[0].variable[0].description).to.equal('Sky blue');
-                expect(file.dss.blocks[0].variable[1].name).to.equal('red');
-                expect(file.dss.blocks[0].variable[1].value).to.equal('#FF0000');
-                expect(file.dss.blocks[0].variable[1].description).to.equal('');
-                done();
-            });
-
-            stream.write(file);
-            stream.end();
-        });
-
-        it('should ignore @variable if not defined', function(done) {
-            var stream = extract({});
-            var file = getCssFile('test/index.css', '/**\n * @variable blue - Sky blue\n  * @variable red\n*/\n$red: #FF0000;\n');
-
-            stream.on('end', function() {
-                expect(file.dss.blocks[0].variable.length).to.equal(1);
-                expect(file.dss.blocks[0].variable[0].name).to.equal('red');
-                expect(file.dss.blocks[0].variable[0].value).to.equal('#FF0000');
-                done();
-            });
-
-            stream.write(file);
-            stream.end();
-        });
-
-        it('should parse LESS @variable syntax', function(done) {
-            var stream = extract({});
-            var file = getCssFile('test/index.css', '/**\n * @variable blue - Sky blue\n */\n@blue: #0000FF;\n');
-
-            stream.on('end', function() {
-                expect(file.dss.blocks[0].variable[0].name).to.equal('blue');
-                expect(file.dss.blocks[0].variable[0].value).to.equal('#0000FF');
-                expect(file.dss.blocks[0].variable[0].description).to.equal('Sky blue');
-                done();
-            });
-
-            stream.write(file);
-            stream.end();
-        });
-
-        it('should parse @template and add it to file.meta', function(done) {
-            var stream = extract({});
-            var file = getCssFile('test/index.css', '/**\n * @template pages/foo\n */');
-
-            stream.on('end', function() {
-                expect(file.meta.template).to.equal('pages/foo');
-                done();
-            });
-
-            stream.write(file);
-            stream.end();
-        });
-
-        it('should parse @partial into a lambda', function(done) {
-            var stream = extract({});
-            var file = getCssFile('test/index.css', '/**\n * @partial partials/bar\n */');
-
-            stream.on('end', function() {
-                expect(file.dss.blocks[0].partial()()).to.equal('{{>partials/bar}}');
-                done();
-            });
-
-            stream.write(file);
-            stream.end();
-        });
+    stream.on('end', function() {
+        t.is(file.dss.blocks[0].name, 'Test');
     });
+
+    stream.write(file);
+    stream.end();
+});
+
+test('should copy @name of index to file.meta.sectionName', function(t) {
+    t.plan(1);
+    var stream = extract({});
+    var file = getCssFile('test/index.css', '/**\n * @name Test\n */');
+
+    stream.on('end', function() {
+        t.is(file.meta.sectionName, 'Test');
+    });
+
+    stream.write(file);
+    stream.end();
+});
+
+test('should copy @name of non-index to file.meta.subsectionName', function(t) {
+    t.plan(1);
+    var stream = extract({});
+    var index = getCssFile('test/index.css', '/**\n * @name Section Index\n */');
+    var file = getCssFile('test/buttons.css', '/**\n * @name Subsection\n */');
+
+    stream.on('end', function() {
+        t.is(file.meta.subsectionName, 'Subsection');
+    });
+
+    stream.write(index);
+    stream.write(file);
+    stream.end();
+});
+
+test('should convert @description to HTML', function(t) {
+    t.plan(1);
+    var stream = extract({});
+    var file = getCssFile('test/index.css', '/**\n * @description Test\n */');
+
+    stream.on('end', function() {
+        t.is(file.dss.blocks[0].description.trim(), '<p>Test</p>');
+    });
+
+    stream.write(file);
+    stream.end();
+});
+
+test('should parse @order and copy first to file.meta', function(t) {
+    t.plan(1);
+    var stream = extract({});
+    var file = getCssFile('test/index.css', '/**\n * @order 1\n */');
+
+    stream.on('end', function() {
+        t.is(file.meta.order, '1');
+    });
+
+    stream.write(file);
+    stream.end();
+});
+
+test('should ignore @order in anything but the first block', function(t) {
+    t.plan(1);
+    var stream = extract({});
+    var file = getCssFile('test/index.css', '/**\n * @name Test\n */\n\n/**\n * @order 1\n */');
+
+    stream.on('end', function() {
+        t.is(file.meta.order, undefined);
+    });
+
+    stream.write(file);
+    stream.end();
+});
+
+test('should make @state an array, even if only one', function(t) {
+    t.plan(1);
+    var stream = extract({});
+    var file = getCssFile('test/index.css', '/**\n * @state .error\n */');
+
+    stream.on('end', function() {
+        t.ok(Array.isArray(file.dss.blocks[0].state));
+    });
+
+    stream.write(file);
+    stream.end();
+});
+
+test('should add @state HTML examples, expanding variables', function(t) {
+    t.plan(1);
+    var stream = extract({});
+    var file = getCssFile('test/index.css', '/**\n * @state .error\n * @markup\n * <span class="{{{escaped}}}">foo</span>\n */');
+
+    stream.on('end', function() {
+        t.is(file.dss.blocks[0].state[0].markup.example, '<span class="error">foo</span>');
+    });
+
+    stream.write(file);
+    stream.end();
+});
+
+test('should strip empty attributes from block.markup', function(t) {
+    t.plan(1);
+    var stream = extract({});
+    var file = getCssFile('test/index.css', '/**\n * @state .error\n * @markup\n * <span id="foo" class="{{{escaped}}}">foo</span>\n */');
+
+    stream.on('end', function() {
+        t.is(file.dss.blocks[0].markup.example, '<span id="foo">foo</span>');
+    });
+
+    stream.write(file);
+    stream.end();
+});
+
+test('should parse name, value and description from @variable', function(t) {
+    t.plan(3);
+    var stream = extract({});
+    var file = getCssFile('test/index.css', '/**\n * @variable blue - Sky blue\n */\n$blue: #0000FF;\n');
+
+    stream.on('end', function() {
+        t.is(file.dss.blocks[0].variable[0].name, 'blue');
+        t.is(file.dss.blocks[0].variable[0].value, '#0000FF');
+        t.is(file.dss.blocks[0].variable[0].description, 'Sky blue');
+    });
+
+    stream.write(file);
+    stream.end();
+});
+
+test('should parse multiple @variable into an array', function(t) {
+    t.plan(6);
+    var stream = extract({});
+    var file = getCssFile('test/index.css', '/**\n * @variable blue - Sky blue\n  * @variable red\n*/\n$blue: #0000FF;\n$red: #FF0000;\n');
+
+    stream.on('end', function() {
+        t.is(file.dss.blocks[0].variable[0].name, 'blue');
+        t.is(file.dss.blocks[0].variable[0].value, '#0000FF');
+        t.is(file.dss.blocks[0].variable[0].description, 'Sky blue');
+        t.is(file.dss.blocks[0].variable[1].name, 'red');
+        t.is(file.dss.blocks[0].variable[1].value, '#FF0000');
+        t.is(file.dss.blocks[0].variable[1].description, '');
+    });
+
+    stream.write(file);
+    stream.end();
+});
+
+test('should ignore @variable if not defined', function(t) {
+    t.plan(3);
+    var stream = extract({});
+    var file = getCssFile('test/index.css', '/**\n * @variable blue - Sky blue\n  * @variable red\n*/\n$red: #FF0000;\n');
+
+    stream.on('end', function() {
+        t.is(file.dss.blocks[0].variable.length, 1);
+        t.is(file.dss.blocks[0].variable[0].name, 'red');
+        t.is(file.dss.blocks[0].variable[0].value, '#FF0000');
+    });
+
+    stream.write(file);
+    stream.end();
+});
+
+test('should parse LESS @variable syntax', function(t) {
+    t.plan(3);
+    var stream = extract({});
+    var file = getCssFile('test/index.css', '/**\n * @variable blue - Sky blue\n */\n@blue: #0000FF;\n');
+
+    stream.on('end', function() {
+        t.is(file.dss.blocks[0].variable[0].name, 'blue');
+        t.is(file.dss.blocks[0].variable[0].value, '#0000FF');
+        t.is(file.dss.blocks[0].variable[0].description, 'Sky blue');
+    });
+
+    stream.write(file);
+    stream.end();
+});
+
+test('should parse @template and add it to file.meta', function(t) {
+    t.plan(1);
+    var stream = extract({});
+    var file = getCssFile('test/index.css', '/**\n * @template pages/foo\n */');
+
+    stream.on('end', function() {
+        t.is(file.meta.template, 'pages/foo');
+    });
+
+    stream.write(file);
+    stream.end();
+});
+
+test('should parse @partial into a lambda', function(t) {
+    t.plan(1);
+    var stream = extract({});
+    var file = getCssFile('test/index.css', '/**\n * @partial partials/bar\n */');
+
+    stream.on('end', function() {
+        t.is(file.dss.blocks[0].partial()(), '{{>partials/bar}}');
+    });
+
+    stream.write(file);
+    stream.end();
 });
