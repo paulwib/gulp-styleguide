@@ -23,7 +23,7 @@
     "gulp-rename": "^1.4.0",
     "gulp-ssg": "^4.0.0",
     "hogan.js": "^3.0.2",
-    "marked": "^0.3.2",
+    "marked": "^0.7.0",
     "plugin-error": "^1.0.1",
     "through": "^2.3.4"
   },
