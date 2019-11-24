@@ -15,12 +15,14 @@
   },
   "dependencies": {
     "dss": "^1.0.4",
+    "dss-parser-variable": "^0.3.0",
     "event-stream": "^4.0.1",
     "extend": "^3.0.2",
     "gulp": "^3.7.0",
     "gulp-hogan-compile": "^2.0.0",
-    "gulp-ssg": "^0.4.5",
-    "hogan-updated": "^3.1.0",
+    "gulp-rename": "^1.4.0",
+    "gulp-ssg": "^4.0.0",
+    "hogan.js": "^3.0.2",
     "marked": "^0.3.2",
     "plugin-error": "^1.0.1",
     "through": "^2.3.4"

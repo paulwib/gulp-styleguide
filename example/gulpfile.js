@@ -45,7 +45,6 @@ gulp.task('clean', function(cb) {
 
 // Add server task
 gulp.task('server', ['default'], function() {
-
     var port = 8745;
 
     gulp.watch(['src/**/*', 'resources/**/*', __dirname + '/../resources/**/*'], ['default']);

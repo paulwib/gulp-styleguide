@@ -4,14 +4,14 @@
 
   {{! The content block to insert into layout }}
 
-    <h2><a href="{{meta.url}}">{{meta.subsectionName}}</a></h2>
+    <h2><a href="{{file.data.url}}">{{file.data.subsectionName}}</a></h2>
 
     {{! Just show DSS for the current file }}
-    {{#dss}}
+    {{#file.data.dss}}
         {{#blocks}}
             {{>partials/dss-block}}
         {{/blocks}}
-    {{/dss}}
+    {{/file.data.dss}}
 
   {{/content}}
 

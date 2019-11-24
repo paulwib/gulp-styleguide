@@ -6,9 +6,10 @@
 var extend = require('extend');
 var gulp = require('gulp');
 var ssg = require('gulp-ssg');
+var rename = require('gulp-rename');
+var compiler = require('gulp-hogan-compile');
 var extract = require('./lib/extract');
 var render = require('./lib/render');
-var compileTemplates = require('./lib/templates');
 
 // Default options
 var defaultOptions = {
@@ -41,7 +42,7 @@ function templates(options) {
 
     return function() {
         return gulp.src(options.src.templates)
-            .pipe(compileTemplates(compiledTemplates));
+            .pipe(compiler(compiledTemplates));
     };
 }
 
@@ -56,10 +57,8 @@ function build(options) {
 
         return gulp.src(options.src.css)
             .pipe(extract())
-            .pipe(ssg(options.site, {
-                sectionProperties: ['sectionName'],
-                sort: 'order'
-            }))
+            .pipe(rename({ extname: '.html' }))
+            .pipe(ssg({ sort: 'order' }))
             .pipe(render(options.site, compiledTemplates))
             .pipe(gulp.dest(options.dest.html));
     };

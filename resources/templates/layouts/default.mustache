@@ -13,9 +13,9 @@
 
     <nav>
     <ul>
-      {{#site.index.sections}}
-      <li><a href="{{url}}">{{sectionName}}</a></li>
-      {{/site.index.sections}}
+    {{#file.data.root.data.children}}
+        <li><a href="{{data.url}}">{{data.sectionName}}</a></li>
+    {{/file.data.root.data.children}}
     </ul>
     </nav>
 
