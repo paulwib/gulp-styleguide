@@ -6,7 +6,6 @@ var sass = require('gulp-sass');
 var del = require('del');
 var http = require('http');
 var send = require('send');
-var livereload = require('gulp-livereload');
 var log = require('fancy-log');
 var styleguide = require('../');
 
@@ -44,7 +43,7 @@ gulp.task('clean', function(cb) {
     return del('dist/**/*', cb);
 });
 
-// Add server task, with live reload
+// Add server task
 gulp.task('server', ['default'], function() {
 
     var port = 8745;
@@ -56,13 +55,6 @@ gulp.task('server', ['default'], function() {
     }).listen(port);
 
     log.info('Preview website running on http://localhost:' + port);
-
-    if(process.platform !== 'win32') {
-        var server = livereload();
-        gulp.watch('dist/**/*').on('change', function(file) {
-            server.changed(file.path);
-        });
-    }
 });
 
 // Add default task

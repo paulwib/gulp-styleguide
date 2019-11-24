@@ -19,7 +19,6 @@
     "extend": "^3.0.2",
     "gulp": "^3.7.0",
     "gulp-hogan-compile": "^2.0.0",
-    "gulp-livereload": "^2.1.0",
     "gulp-ssg": "^0.4.5",
     "hogan-updated": "^3.1.0",
     "marked": "^0.3.2",
