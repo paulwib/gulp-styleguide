@@ -18,7 +18,7 @@
     "dss-parser-variable": "^0.3.0",
     "event-stream": "^4.0.1",
     "extend": "^3.0.2",
-    "gulp": "^3.7.0",
+    "gulp": "^4.0.2",
     "gulp-hogan-compile": "^2.0.0",
     "gulp-rename": "^1.4.0",
     "gulp-ssg": "^4.0.0",
